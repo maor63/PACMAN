@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 
-<head></head>
+<head>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="myJs.js"></script>
+</head>
 
 <body>SCORE:
 <input id="lblScore" type="text"/>
@@ -13,6 +16,7 @@ TIME:
 
 <script type="text/javascript">
     var context = canvas.getContext("2d");
+    var g ;
     var shape = new Object();
     var board;
     var score;
@@ -20,6 +24,7 @@ TIME:
     var start_time;
     var time_elapsed;
     var interval;
+    var pacman_lives = 3;
     var direction = DrawPacmanRight;
     var Direction = Object.freeze({UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4});
     var GameItems = Object.freeze({BLACK_FOOD: 1, PACMAN: 2, BLANK: 0, OBSTACLE: 4, GHOST: 5});
@@ -27,6 +32,7 @@ TIME:
     Start();
 
     function Start() {
+        g= new Ghost(0, 0, "blue");
         board = new Array();
         score = 0;
         pac_color = "yellow";
@@ -39,10 +45,10 @@ TIME:
             board[i] = new Array();
             //put obstacles in (i=3,j=3) and (i=3,j=4) and (i=3,j=5), (i=6,j=1) and (i=6,j=2)
             for (var j = 0; j < 10; j++) {
-                if (i == 0 && j == 0) {
-                    board[i][j] = GameItems.GHOST;
-                }
-                else if ((i == 3 && j == 3) || (i == 3 && j == 4) || (i == 3 && j == 5) || (i == 6 && j == 1) || (i == 6 && j == 2)) {
+                // if (i == 0 && j == 0) {
+                //     board[i][j] = GameItems.GHOST;
+                // }
+                if ((i == 3 && j == 3) || (i == 3 && j == 4) || (i == 3 && j == 5) || (i == 6 && j == 1) || (i == 6 && j == 2)) {
                     board[i][j] = GameItems.OBSTACLE;
                 }
                 // put pacman and food at random places
@@ -179,15 +185,18 @@ TIME:
                 else if (board[i][j] == GameItems.OBSTACLE) { // 4 means obstacle
                     DrawObstacle(center);
                 }
-                else if (board[i][j] == GameItems.GHOST) {
-                    context.beginPath();
-                    context.fillStyle = "blue"; //color
-                    context.fillRect(center.x - 15, center.y - 15, 30, 30)
-                    context.fill();
-                }
+                // else if (board[i][j] == GameItems.GHOST) {
+                //     context.beginPath();
+                //     context.fillStyle = "blue"; //color
+                //     context.fillRect(center.x - 15, center.y - 15, 30, 30)
+                //     context.fill();
+                // }
             }
         }
-
+        context.beginPath();
+        context.fillStyle = g.color; //color
+        context.fillRect(g.x * 60 + 15, g.y * 60 + 15, 30, 30)
+        context.fill();
 
     }
 
@@ -222,12 +231,21 @@ TIME:
         if (board[shape.i][shape.j] == GameItems.BLACK_FOOD) { //pacman eat food
             score += 5;
         }
-        if(board[shape.i][shape.j] == GameItems.GHOST){
-            window.clearInterval(interval);
-            window.alert("Game Over");
-            return;
-        }
         board[shape.i][shape.j] = GameItems.PACMAN; // put pacman
+        if (board[g.x][g.y] == GameItems.PACMAN) {
+            if (pacman_lives == 0) {
+                window.clearInterval(interval);
+                window.alert("Game Over");
+                return;
+            }
+            else {
+                window.clearInterval(interval);
+                pacman_lives--;
+                window.alert("You Lose!!!!!!!!!!! " + pacman_lives + " life left");
+                Start();
+            }
+        }
+        g.NextMove();
         var currentTime = new Date();
         time_elapsed = (currentTime - start_time) / 1000;
         if (score >= 20 && time_elapsed <= 10) {//Change pacman color to green if you play well
@@ -239,6 +257,36 @@ TIME:
         }
         else {
             Draw(direction);
+        }
+    }
+
+    function Ghost(x, y, color) {
+        this.color = color;
+        this.x = x;
+        this.y = y;
+        this.NextMove = function () {
+            var randomNum = Math.floor((Math.random() * 4) + 1);
+            // board[this.x][this.y] = 0;
+            if (randomNum == Direction.UP) {//Up
+                if (this.y > 0 && board[this.x][this.y - 1] != GameItems.OBSTACLE) {//Check if not obstacle or out the boarder
+                    this.y--;
+                }
+            }
+            if (randomNum == Direction.DOWN) {//Down
+                if (this.y < 9 && board[this.x][this.y + 1] != GameItems.OBSTACLE) {
+                    this.y++;
+                }
+            }
+            if (randomNum == Direction.LEFT) {//Left
+                if (this.x > 0 && board[this.x - 1][this.y] != GameItems.OBSTACLE) {
+                    this.x--;
+                }
+            }
+            if (randomNum == Direction.RIGHT) {//Right
+                if (this.x < 9 && board[this.x + 1][this.y] != GameItems.OBSTACLE) {
+                    this.x++;
+                }
+            }
         }
     }
 </script>
