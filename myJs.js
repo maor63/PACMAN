@@ -174,10 +174,12 @@ function Draw(DrawPacmanDirection) {
 
         }
     }
-    context.beginPath();
-    context.fillStyle = movingScore.color; //color
-    context.fillRect(movingScore.x * 60 + 15, movingScore.y * 60 + 15, 30, 30)
-    context.fill();
+    if(movingScore.alive) {
+        context.beginPath();
+        context.fillStyle = movingScore.color; //color
+        context.fillRect(movingScore.x * 60 + 15, movingScore.y * 60 + 15, 30, 30)
+        context.fill();
+    }
 
     context.beginPath();
     context.fillStyle = ghost.color; //color
@@ -186,7 +188,35 @@ function Draw(DrawPacmanDirection) {
 
 }
 
+function GhostEatsPacman() {
+    if (pacman_lives == 0) {
+        window.clearInterval(interval);
+        window.alert("Game Over");
+        // return;
+    }
+    else {
+        window.clearInterval(interval);
+        pacman_lives--;
+        window.alert("You Lose!!!!!!!!!!! " + pacman_lives + " life left");
+        Start();
+    }
+}
+
+function CheckCollisions() {
+    if (board[movingScore.x][movingScore.y] == GameItems.PACMAN) { // pacman eats moving score
+        score += 50;
+        movingScore.alive = false;
+    }
+
+    if (board[ghost.x][ghost.y] == GameItems.PACMAN) { //ghost eats pacman score
+        GhostEatsPacman();
+    }
+}
+
 function UpdatePosition() {
+    CheckCollisions();
+
+
     board[pacman_position.i][pacman_position.j] = 0;
     var moved = false;
     var x = GetKeyPressed()
@@ -222,23 +252,12 @@ function UpdatePosition() {
         score += 5;
     }
     board[pacman_position.i][pacman_position.j] = GameItems.PACMAN; // put pacman
-
-    if (board[ghost.x][ghost.y] == GameItems.PACMAN) {
-        if (pacman_lives == 0) {
-            window.clearInterval(interval);
-            window.alert("Game Over");
-            return;
-        }
-        else {
-            window.clearInterval(interval);
-            pacman_lives--;
-            window.alert("You Lose!!!!!!!!!!! " + pacman_lives + " life left");
-            Start();
-        }
-    }
+    CheckCollisions();
 
     ghost.NextMove();
     movingScore.NextMove();
+
+    // CheckCollisions();
     var currentTime = new Date();
     time_elapsed = (currentTime - start_time) / 1000;
     if (score >= 20 && time_elapsed <= 10) {//Change pacman color to green if you play well
@@ -257,6 +276,7 @@ function MovingScore(x, y, color) {
     this.color = color;
     this.x = x;
     this.y = y;
+    this.alive = true;
     this.NextMove = function () {
         var randomNum = Math.floor((Math.random() * 4) + 1);
        if (randomNum == Direction.UP) {//Up
@@ -296,6 +316,9 @@ function Ghost(x, y, color) {
             var pos = this.track.pop();
             this.x = pos.x;
             this.y = pos.y;
+            // if(pacman_position.i == this.x && pacman_position.j == this.y){
+            //     GhostEatsPacman();
+            // }
         }
         else {
             this.CalcTrack();
@@ -313,7 +336,7 @@ function DFS(Start){
     var graph = $.extend(true, [], board);
     graph[pacman_position.i][pacman_position.j] = GameItems.PACMAN;
     var stack = new Array();
-    stack.push(Start);
+    stack.unshift(Start);
     while (stack.length > 0){
         var node = stack.pop();
         if(board[node.x][node.y] == GameItems.PACMAN){
@@ -327,7 +350,7 @@ function DFS(Start){
         var childrens = Expand(node, graph);
         jQuery.each( childrens, function( i, child ) {
             // graph[child.x][child.y] = -1;
-            stack.push(child);
+            stack.unshift(child);
         });
         graph[node.x][node.y] = -1;
     }
