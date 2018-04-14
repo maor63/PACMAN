@@ -37,8 +37,7 @@ function Start() {
     var food_remain = total_food;
     remain_food = total_food;
     var pacman_remain = 1;
-    pacman_position.i = Math.floor(board_width / 2);
-    pacman_position.j = Math.floor(board_height / 2);
+
     //Init the board: put pacman, obstacles and food
     start_time = new Date();
 
@@ -69,11 +68,19 @@ function Start() {
         }
     }
     //Put all remaining food on the board
+    var emptyCell;
+    if(pacman_remain > 0){
+        emptyCell = findRandomEmptyCell(board);
+        pacman_position.i = emptyCell[0];
+        pacman_position.j = emptyCell[1];
+
+    }
     while (food_remain > 0) {
-        var emptyCell = findRandomEmptyCell(board);
+        emptyCell = findRandomEmptyCell(board);
         board[emptyCell[0]][emptyCell[1]] = 1;
         food_remain--;
     }
+
     //Init listeners to identify keyboard clicks
     keysDown = {};
     addEventListener("keydown", function (e) {
