@@ -1,9 +1,8 @@
-
-var context = canvas.getContext("2d");
-var movingScore ;
+var context;
+var movingScore;
 var ghosts;
-var pacman_position = new Object();
-var board;
+var pacman_position;
+var board = [];
 var score;
 var pac_color;
 var start_time;
@@ -15,22 +14,31 @@ var Direction = Object.freeze({UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4});
 var GameItems = Object.freeze({BLACK_FOOD: 1, PACMAN: 2, BLANK: 0, OBSTACLE: 4, GHOST: 5});
 var board_height = 10;
 var board_width = 15;
+var total_food = 80;
+var remain_food;
 
-$( document ).ready(function () {
-    Start();
-})
+
+Start();
 
 
 function Start() {
+    context = canvas.getContext("2d");
+    pacman_position = new Object();
     ghosts = [];
     ghosts.push(new Ghost(0, 0, "green"));
-    movingScore= new MovingScore(5, 0, "blue");
+    // ghosts.push(new Ghost(0, board_height - 1, "green"));
+    // ghosts.push(new Ghost(board_width - 1, 0, "green"));
+    // ghosts.push(new Ghost(board_width - 1, board_height - 1, "green"));
+    movingScore = new MovingScore(5, 0, "blue");
     board = new Array();
     score = 0;
     pac_color = "yellow";
     var cnt = 200;
-    var food_remain = 80;
+    var food_remain = total_food;
+    remain_food = total_food;
     var pacman_remain = 1;
+    pacman_position.i = Math.floor(board_width / 2);
+    pacman_position.j = Math.floor(board_height / 2);
     //Init the board: put pacman, obstacles and food
     start_time = new Date();
 
@@ -75,7 +83,9 @@ function Start() {
         keysDown[e.keyCode] = false;
     }, false);
     //Update pacman position on the board every 250ms
-    interval = setInterval(UpdatePosition, 150);
+    $(document).ready(function () {
+        interval = setInterval(UpdatePosition, 150);
+    });
 }
 
 //Find random empty cell on 10x10 board  (the 9 need to be variable)
@@ -166,7 +176,7 @@ function DrawGhost(ghost) {
 }
 
 //Draw the board(Array) on the canvas
-function Draw(DrawPacmanDirection) {
+function Draw() {
     canvas.width = canvas.width; //clean board
     lblScore.value = score; //lbl = label
     lblTime.value = time_elapsed;
@@ -176,7 +186,7 @@ function Draw(DrawPacmanDirection) {
             center.x = i * 60 + 30;
             center.y = j * 60 + 30;
             if (board[i][j] == GameItems.PACMAN) {//2 means pacman
-                DrawPacmanDirection(center);
+                direction(center);
             } else if (board[i][j] == GameItems.BLACK_FOOD) {//1 means food
                 DrawBlackFood(center);
             }
@@ -186,13 +196,13 @@ function Draw(DrawPacmanDirection) {
 
         }
     }
-    if(movingScore.alive) {
+    if (movingScore.alive) {
         context.beginPath();
         context.fillStyle = movingScore.color; //color
         context.fillRect(movingScore.x * 60 + 15, movingScore.y * 60 + 15, 30, 30)
         context.fill();
     }
-    $.each(ghosts, function(i ,ghost){
+    $.each(ghosts, function (i, ghost) {
         DrawGhost(ghost);
     });
 
@@ -214,25 +224,26 @@ function GhostEatsPacman() {
 }
 
 function CheckCollisions() {
+    var dead = false;
     if (board[movingScore.x][movingScore.y] == GameItems.PACMAN) { // pacman eats moving score
         score += 50;
         movingScore.alive = false;
     }
 
-    $.each(ghosts, function(i ,ghost){
+    $.each(ghosts, function (i, ghost) {
         if (board[ghost.x][ghost.y] == GameItems.PACMAN) { //ghost eats pacman score
             GhostEatsPacman();
+            dead = true;
         }
     });
-
+    return dead;
 }
 
 function UpdatePosition() {
-    CheckCollisions();
-
-
+    var dead;
+    dead = CheckCollisions();
     board[pacman_position.i][pacman_position.j] = 0;
-    var x = GetKeyPressed()
+    var x = GetKeyPressed();
     if (x == Direction.UP) {//Up
         if (pacman_position.j > 0 && board[pacman_position.i][pacman_position.j - 1] != GameItems.OBSTACLE) {//Check if not obstacle or out the boarder
             pacman_position.j--;
@@ -259,13 +270,15 @@ function UpdatePosition() {
     }
     if (board[pacman_position.i][pacman_position.j] == GameItems.BLACK_FOOD) { //pacman eat food
         score += 5;
+        remain_food--;
     }
     board[pacman_position.i][pacman_position.j] = GameItems.PACMAN; // put pacman
-    CheckCollisions();
-
-    $.each(ghosts, function(i ,ghost){
-        ghost.NextMove();
-    });
+    dead = CheckCollisions();
+    if (!dead) {
+        $.each(ghosts, function (i, ghost) {
+            ghost.NextMove();
+        });
+    }
     movingScore.NextMove();
 
     var currentTime = new Date();
@@ -273,12 +286,13 @@ function UpdatePosition() {
     if (score >= 20 && time_elapsed <= 10) {//Change pacman color to green if you play well
         pac_color = "green";
     }
-    if (score == 50) {//game ended
+    if (score == 200 || remain_food == 0) {//game ended
         window.clearInterval(interval);
+        Draw();
         window.alert("Game completed");
     }
     else {
-        Draw(direction);
+        Draw();
     }
 }
 
@@ -289,7 +303,7 @@ function MovingScore(x, y, color) {
     this.alive = true;
     this.NextMove = function () {
         var randomNum = Math.floor((Math.random() * 4) + 1);
-       if (randomNum == Direction.UP) {//Up
+        if (randomNum == Direction.UP) {//Up
             if (this.y > 0 && board[this.x][this.y - 1] != GameItems.OBSTACLE) {//Check if not obstacle or out the boarder
                 this.y--;
             }
@@ -318,11 +332,11 @@ function Ghost(x, y, color) {
     this.y = y;
     this.track = new Array();
     this.CalcTrack = function () {
-        this.track = DFS(new Node(this.x, this.y));
+        this.track = BFS(new Node(this.x, this.y));
     }
 
     this.NextMove = function () {
-        if(this.track.length >0){
+        if (this.track.length > 0) {
             var pos = this.track.pop();
             this.x = pos.x;
             this.y = pos.y;
@@ -339,23 +353,23 @@ function Node(x, y, pre) {
     this.preNode = pre;
 }
 
-function DFS(Start){
+function BFS(Start) {
     var graph = $.extend(true, [], board);
     graph[pacman_position.i][pacman_position.j] = GameItems.PACMAN;
     var stack = new Array();
     stack.unshift(Start);
-    while (stack.length > 0){
+    while (stack.length > 0) {
         var node = stack.pop();
-        if(board[node.x][node.y] == GameItems.PACMAN){
+        if (board[node.x][node.y] == GameItems.PACMAN) {
             var track = new Array();
-            while (node.preNode != null){
+            while (node.preNode != null) {
                 track.push(node);
                 node = node.preNode
             }
             return track;
         }
         var childrens = Expand(node, graph);
-        jQuery.each( childrens, function( i, child ) {
+        jQuery.each(childrens, function (i, child) {
             // graph[child.x][child.y] = -1;
             stack.unshift(child);
         });
@@ -371,17 +385,17 @@ function Expand(node, graph) {
         graph[node.x][node.y - 1] = -1;
     }
 
-    if (node.y < (board_height - 1) && graph[node.x][node.y + 1] != GameItems.OBSTACLE&& graph[node.x][node.y + 1] != -1) {
+    if (node.y < (board_height - 1) && graph[node.x][node.y + 1] != GameItems.OBSTACLE && graph[node.x][node.y + 1] != -1) {
         children.push(new Node(node.x, node.y + 1, node));
         graph[node.x][node.y + 1] = -1;
     }
 
-    if (node.x > 0 && graph[node.x - 1][node.y] != GameItems.OBSTACLE&& graph[node.x - 1][node.y] != -1) {
+    if (node.x > 0 && graph[node.x - 1][node.y] != GameItems.OBSTACLE && graph[node.x - 1][node.y] != -1) {
         children.push(new Node(node.x - 1, node.y, node));
         graph[node.x - 1][node.y] = -1;
     }
 
-    if (node.x < (board_width - 1) && graph[node.x + 1][node.y] != GameItems.OBSTACLE&& graph[node.x + 1][node.y] != -1) {
+    if (node.x < (board_width - 1) && graph[node.x + 1][node.y] != GameItems.OBSTACLE && graph[node.x + 1][node.y] != -1) {
         children.push(new Node(node.x + 1, node.y, node));
         graph[node.x + 1][node.y] = -1;
     }
