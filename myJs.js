@@ -16,10 +16,11 @@ var board_height = 10;
 var board_width = 15;
 var total_food = 80;
 var remain_food;
+var users={}
+users['a']='a';
 
 
-Start();
-
+//Start();
 
 function Start() {
     context = canvas.getContext("2d");
@@ -185,6 +186,8 @@ function DrawGhost(ghost) {
 //Draw the board(Array) on the canvas
 function Draw() {
     canvas.width = canvas.width; //clean board
+    //canvas.width  = window.innerWidth;
+    //canvas.height = window.innerHeight;
     lblScore.value = score; //lbl = label
     lblTime.value = time_elapsed;
     for (var i = 0; i < board_width; i++) {
@@ -422,4 +425,11 @@ function showSection(section) {
     var selected = document.getElementById(section);
     selected .style.visibility="visible";
 
+}
+
+function showAboutDialog() {
+    document.getElementById("aboutWindow").showModal();
+}
+function closeAboutDialog() {
+    document.getElementById("aboutWindow").close();
 }

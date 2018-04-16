@@ -9,56 +9,85 @@
 
 </head>
 
-<body onload="showSection('welcome')">
+<body onload="showSection('gameBoard')">
 
-
-<nav>
-
+<menu>
     <div id="nav_bar">
         <div id="nav_wrapper">
     <ul>
         <li><a onclick="showSection('welcome')" href="#">welcome</a></li>
         <li><a onclick="showSection('register')"href="#">register</a></li>
         <li><a onclick="showSection('login')"href="#">Login</a></li>
-        <li><a id="AboutBtn" href="#">About</a></li>
+        <li><a onclick="showAboutDialog()" href="#">About</a></li>
     </ul>
 
         </div>
     </div>
-</nav>
+</menu>
 <br/>
 <br/>
 <br/>
 <header>
     <h1 id="title">THE GREATEST PACMAN GAME!</h1>
 </header>
+<content>
+    <section id="welcome">
+        <p> welcome section</p>
+    </section>
+    <section id="register">
+        <p> register section</p>
 
+    </section>
+    <section id="login">
+        <br/>
+        <br/>
+        <p> login section</p>
+        <div class="container2">
+            <div class="main">
+                <h2>Login here:</h2>
+                <form id="form_id" method="post" name="loginForm">
+                    <label>User Name :</label>
+                    <input type="text" name="username" id="username"/>
+                    <br/>
+                    <label>Password :</label>
+                    <input type="password" name="password" id="password"/>
+                    <br/>
+                    <br/>
+                    <input type="button" value="Login" id="submit" onclick="validate()"/>
+                </form>
+            </div>
+        </div>
 
-<section id="welcome">
-    <p> welcome section</p>
-</section>
-<section id="register">
-    <p> register section</p>
-
-</section>
-<section id="login">
-    <p> login section</p>
-
-</section>
-<section id="gameBoard">
-    SCORE:
-    <input id="lblScore" type="text"/>
-    <br/>
-    TIME:
-    <input id="lblTime" type="text"/>
-    <br/>
-    <br/>
-    <canvas id="canvas" height="600" width="600"></canvas>
-</section>
+    </section>
+    <section id="gameBoard">
+        <br/>
+        SCORE:
+        <input id="lblScore" type="text"/>
+        <br/>
+        TIME:
+        <input id="lblTime" type="text"/>
+        <br/>
+        <br/>
+        <canvas id="canvas" height="600" width="600"></canvas>
+    </section>
+</content>
+<div id="about">
+    <dialog id="aboutWindow">
+        <h3>About Us</h3>
+        <p> Submmiters: Maor Reuven and Yael Sheinberg, SISE students 3rd year </p>
+        <br/>
+        <p>We did not use templates </p><br/>
+        <p>The struggles that we had were mainly about the design and colors of the page</p>
+        <br/>
+        <br/>
+        <button onclick="closeAboutDialog()">Close</button>
+        <br/>
+    </dialog>
+</div>
 
 
 <script src="myJs.js"></script>
-
+<script src="login.js"></script>
 <br/>
 <br/>
 <br/>
