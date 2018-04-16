@@ -408,3 +408,18 @@ function Expand(node, graph) {
     }
     return children;
 }
+function showSection(section) {
+    var section1 = document.getElementById('welcome');
+    section1.style.visibility="hidden";
+    var section2 = document.getElementById('register');
+    section2.style.visibility="hidden";
+    var section3 = document.getElementById('login');
+    section3.style.visibility="hidden";
+    var section4 = document.getElementById('gameBoard');
+    section4.style.visibility="hidden";
+
+    //show only one section
+    var selected = document.getElementById(section);
+    selected .style.visibility="visible";
+
+}
