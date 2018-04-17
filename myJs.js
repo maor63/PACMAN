@@ -26,7 +26,7 @@ var total_food = 80;
 var remain_food;
 var users = {};
 users['a'] = 'a';
-var balls ;
+// var balls ;
 var ghosts_number;
 var duration;
 
@@ -35,19 +35,19 @@ var duration;
 
 function Start() {
     showSection("gameBoard");
-    balls = parseInt(document.getElementById('balls').value);
+    total_food = parseInt(document.getElementById('balls').value);
     ghosts_number = parseInt(document.getElementById('ghosts').value);
     duration = parseInt(document.getElementById('duration').value);
     context = canvas.getContext("2d");
     pacman_position = new Object();
     ghosts = [];
-    ghosts.push(new Ghost(0, 0, "green"));
+    ghosts.push(new Ghost(0, 0, "Gallery/monster1.png"));
     if (ghosts_number > 1)
-        ghosts.push(new Ghost(0, board_height - 1, "green"));
+        ghosts.push(new Ghost(0, board_height - 1, "Gallery/monster2.png"));
     if (ghosts_number > 2)
-        ghosts.push(new Ghost(board_width - 1, 0, "green"));
+        ghosts.push(new Ghost(board_width - 1, 0, "Gallery/monster3.png"));
     // ghosts.push(new Ghost(board_width - 1, board_height - 1, "green"));
-    movingScore = new MovingScore(5, 0, "blue");
+    movingScore = new MovingScore(5, 0, "Gallery/Pineapple.png");
     board = new Array();
     score = 0;
     pac_color = "yellow";
@@ -146,7 +146,7 @@ function GetKeyPressed() {
 function DrawPacmanEye(x, y) {
     context.beginPath();
     context.arc(x, y, 5, 0, 2 * Math.PI); // circle
-    context.fillStyle = "black"; //color
+    context.fillStyle = "black"; //image
     context.fill();
 }
 
@@ -154,7 +154,7 @@ function DrawPacman(center, startAngle, endAngle) {
     context.beginPath();
     context.arc(center.x, center.y, 30, startAngle, endAngle); // half circle
     context.lineTo(center.x, center.y);
-    context.fillStyle = pac_color; //color
+    context.fillStyle = pac_color; //image
     context.fill();
 
 }
@@ -182,7 +182,7 @@ function DrawPacmanUp(center) {
 function DrawFood(center, color) {
     context.beginPath();
     context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
-    context.fillStyle = color; //color
+    context.fillStyle = color; //image
     //context.fillText("10",10,90);
     context.fill();
 
@@ -191,15 +191,12 @@ function DrawFood(center, color) {
 function DrawObstacle(center) {
     context.beginPath();
     context.rect(center.x - 30, center.y - 30, 60, 60);
-    context.fillStyle = "grey"; //color
+    context.fillStyle = "grey"; //image
     context.fill();
 }
 
 function DrawGhost(ghost) {
-    context.beginPath();
-    context.fillStyle = ghost.color; //color
-    context.fillRect(ghost.x * 60 + 15, ghost.y * 60 + 15, 30, 30)
-    context.fill();
+    context.drawImage(ghost.image,ghost.x * 60,ghost.y * 60,60,60);
 }
 
 //Draw the board(Array) on the canvas
@@ -226,10 +223,7 @@ function Draw() {
         }
     }
     if (movingScore.alive) {
-        context.beginPath();
-        context.fillStyle = movingScore.color; //color
-        context.fillRect(movingScore.x * 60 + 15, movingScore.y * 60 + 15, 30, 30)
-        context.fill();
+        context.drawImage(movingScore.image ,movingScore.x * 60,movingScore.y * 60,60,60);
     }
     $.each(ghosts, function (i, ghost) {
         DrawGhost(ghost);
@@ -316,7 +310,7 @@ function UpdatePosition() {
 
     var currentTime = new Date();
     time_elapsed = (currentTime - start_time) / 1000;
-    if (score >= 20 && time_elapsed <= 10) {//Change pacman color to green if you play well
+    if (score >= 20 && time_elapsed <= 10) {//Change pacman image to green if you play well
         pac_color = "green";
     }
     if (score >= 200 || remain_food == 0) {//game ended
@@ -330,8 +324,10 @@ function UpdatePosition() {
     }
 }
 
-function MovingScore(x, y, color) {
-    this.color = color;
+function MovingScore(x, y, image) {
+    var imageObj = new Image();
+    imageObj.src = image;
+    this.image = imageObj;
     this.x = x;
     this.y = y;
     this.alive = true;
@@ -360,8 +356,10 @@ function MovingScore(x, y, color) {
     }
 }
 
-function Ghost(x, y, color) {
-    this.color = color;
+function Ghost(x, y, image) {
+    var imageObj = new Image();
+    imageObj.src = image;
+    this.image = imageObj;
     this.x = x;
     this.y = y;
     this.track = new Array();

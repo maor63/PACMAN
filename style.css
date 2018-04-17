@@ -98,7 +98,7 @@ input[type=button] {
     width: 120px;
 }
 
-/* When moving the mouse over the submit button, add a darker green color */
+/* When moving the mouse over the submit button, add a darker green image */
 input[type=button]:hover {
     background-color: #cfffe8;
 
