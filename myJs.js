@@ -13,16 +13,16 @@ var direction = DrawPacmanRight;
 var Direction = Object.freeze({UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4});
 var GameItems = Object.freeze({RED_FOOD: 1, PACMAN: 2, BLANK: 0, OBSTACLE: 4, GHOST: 5,YELLOW_FOOD: 7,ORANGE_FOOD: 6});
 var board_height = 10;
-var board_width = 15;
+var board_width = 10;
 var total_food = 80;
 var remain_food;
-var users={}
+var users={};
 users['a']='a';
 
 
 //Start();
 
-function Start(balls,ghosts,time) {
+function Start() {
     context = canvas.getContext("2d");
     pacman_position = new Object();
     ghosts = [];
@@ -162,11 +162,13 @@ function DrawPacmanUp(center) {
     DrawPacmanEye(center.x + 15, center.y + 5);
 }
 
-function DrawBlackFood(center,color) {
+function DrawFood(center, color) {
     context.beginPath();
     context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
     context.fillStyle = color; //color
+    //context.fillText("10",10,90);
     context.fill();
+
 }
 
 function DrawObstacle(center) {
@@ -198,7 +200,7 @@ function Draw() {
             if (board[i][j] == GameItems.PACMAN) {//2 means pacman
                 direction(center);
             } else if (board[i][j] == GameItems.RED_FOOD) {//1 means food
-                DrawBlackFood(center,"red");
+                DrawFood(center,"red");
             }
             else if (board[i][j] == GameItems.OBSTACLE) { // 4 means obstacle
                 DrawObstacle(center);
@@ -221,9 +223,10 @@ function Draw() {
 
 function GhostEatsPacman() {
     if (pacman_lives == 0) {
-        window.clearInterval(interval);
         window.alert("Game Over");
-        return;
+        window.clearInterval(interval);
+        showSection("welcome")
+        //return;
     }
     else {
         window.clearInterval(interval);
@@ -242,7 +245,7 @@ function CheckCollisions() {
 
     $.each(ghosts, function (i, ghost) {
         if (board[ghost.x][ghost.y] == GameItems.PACMAN) { //ghost eats pacman score
-            GhostEatsPacman();
+
             dead = true;
         }
     });
@@ -289,6 +292,9 @@ function UpdatePosition() {
             ghost.NextMove();
         });
     }
+    else {
+        GhostEatsPacman();
+    }
     movingScore.NextMove();
 
     var currentTime = new Date();
@@ -296,10 +302,11 @@ function UpdatePosition() {
     if (score >= 20 && time_elapsed <= 10) {//Change pacman color to green if you play well
         pac_color = "green";
     }
-    if (score == 200 || remain_food == 0) {//game ended
+    if (score >= 200 || remain_food == 0) {//game ended
+        window.alert("Game completed");
         window.clearInterval(interval);
         Draw();
-        window.alert("Game completed");
+        // return;
     }
     else {
         Draw();
@@ -341,18 +348,26 @@ function Ghost(x, y, color) {
     this.x = x;
     this.y = y;
     this.track = new Array();
+    this.moved = false;
     this.CalcTrack = function () {
         this.track = BFS(new Node(this.x, this.y));
     }
 
     this.NextMove = function () {
-        if (this.track.length > 0) {
-            var pos = this.track.pop();
-            this.x = pos.x;
-            this.y = pos.y;
+        if(!this.moved) {
+            this.moved = true;
+            if (this.track.length > 0) {
+                var pos = this.track.pop();
+                this.x = pos.x;
+                this.y = pos.y;
+            }
+            else {
+                this.CalcTrack();
+            }
+
         }
         else {
-            this.CalcTrack();
+            this.moved = false;
         }
     }
 }

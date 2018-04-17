@@ -10,7 +10,8 @@ function validate() {
     }
     if (username == "a" && password == "a") {
         alert("Login successfully");
-        showSection('settings'); // Redirecting to other page.
+        showSection('gameBoard');
+        Start();// Redirecting to other page.
         return false;
     }
 
