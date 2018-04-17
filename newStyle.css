@@ -1,0 +1,134 @@
+#nav_bar ul {
+    top: 104px;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+#nav_bar li {
+    float: left;
+}
+
+#nav_bar li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+#nav_bar li a:hover {
+    background-color: #111;
+}
+
+header ul {
+    left: 0;
+    top: 0;
+    position: absolute;
+    width: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+header li {
+    float: left;
+}
+
+header h4 {
+    padding-left: 50%;
+    float: right;
+}
+
+h1{
+    font-family: sans-serif;
+    text-shadow: 0px -11px 10px #e6e6ff, 0px -3px 9px #cfffe8 ;
+    font-size: 3.2em;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0px 10px 0px;
+
+}
+
+section
+{
+    position: fixed;
+    top:200px;
+    display: block;
+    margin-left: 35%;
+    margin-right: auto;
+    width: 500px;
+    height: 500px;
+    text-align: center;
+}
+input,select, textarea {
+    width: 70%; /* Full width */
+    padding: 12px; /* Some padding */
+    border: 1px solid #ccc; /* Gray border */
+    border-radius: 6px; /* Rounded borders */
+    box-sizing: border-box; /* Make sure that padding and width stays in place */
+    margin-top: 6px; /* Add a top margin */
+    margin-bottom: 16px; /* Bottom margin */
+    resize: vertical; /* Allow the user to vertically resize the textarea (not horizontally) */
+    background-color: #ffffff;
+}
+input[type=button],input[type=submit],input[type=reset] {
+    background-color: #51ffeb;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 30%;
+    cursor: pointer;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    font-family: sans-serif;
+    width: 120px;
+}
+
+/* When moving the mouse over the submit button, add a darker green image */
+input[type=button]:hover {
+    background-color: #cfffe8;
+
+}
+input[type=submit]:hover {
+    background-color: #cfffe8;
+
+}
+input[type=reset]:hover {
+    background-color: #cfffe8;
+}
+
+.container {
+    border-radius: 5px;
+    background-color: #7debff;
+    padding: 30px;
+    width: 70%;
+    text-align: center;
+    margin: 0 auto;
+    font-family: sans-serif;
+}
+
+#inputs ul {
+    top: 130px;
+    left: 25%;
+    position: fixed;
+    width: 100%;
+    list-style-type: none;
+    padding: 0;
+    overflow: hidden;
+}
+
+#inputs li {
+    float: left;
+}
+
+#gameBoard{
+    margin-left: 25%;
+    position: fixed;
+}

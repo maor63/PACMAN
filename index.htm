@@ -6,34 +6,38 @@
     <link rel="stylesheet" type="text/css" href="newStyle.css">
     <link rel="icon" type="image/png" href="gallery/pacIcon.ico">
     <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="myJs.js"></script>
+    <script src="login.js"></script>
 
 </head>
 
-<body onload="showSection('welcome')">
+<body>
 
+<header>
+    <ul>
+        <li><img src="Gallery/logo.png" alt="Logo" ></li>
+        <li><h1 id="title">THE GREATEST PACMAN GAME!</h1></li>
+        <li><h4> Maor Reuven & Yael Sheinberg</h4></li>
+    </ul>
+</header>
 <menu>
     <div id="nav_bar">
-        <div id="nav_wrapper">
         <ul>
             <li><a onclick="showSection('welcome')" href="#">welcome</a></li>
             <li><a onclick="showSection('register')"href="#">register</a></li>
             <li><a onclick="showSection('login')"href="#">Login</a></li>
             <li><a onclick="showAboutDialog()" href="#">About</a></li>
         </ul>
-        </div>
     </div>
 </menu>
 <br/>
 <br/>
 <br/>
-<header>
-    <h1 id="title">THE GREATEST PACMAN GAME!</h1>
-    <h4> Maor Reuven & Yael Sheinberg</h4>
-</header>
-<content>
+
+<article>
     <section id="welcome">
-        <h4 id="welocmeTitle"> Welcome !</h4>
-        <img src="Gallery/paclogo.png" alt="Logo">
+        <h2 id="welocmeTitle"> Welcome !</h2>
+        <img src="Gallery/logo2.png" alt="Logo" >
         <br/>
         <div class="boxes">
         <input type="button" value="Login" id="loginBtn" onclick="showSection('login')"/>
@@ -43,9 +47,9 @@
     <section id="register">
         <br/>
         <br/>
-        <div class="container2">
+        <div class="container">
         <p> register section</p>
-            <form method = "post" action = "http://www.deitel.com">
+            <form id="registerForm" method = "post" >
                 <p>
                     <label>User Name: </label>
                     <input type="text" name="usernameR" id="usernameR"/>
@@ -74,7 +78,7 @@
                 </p>
 
                 <p>
-                    <input type = "submit" value = "Submit" onclick="Register()" />
+                    <input type = "button" value = "Submit" onclick="Register()" />
                     <input type = "reset" value = "Clear" />
                 </p>
             </form>
@@ -86,7 +90,7 @@
         <br/>
         <br/>
 
-        <div class="container2">
+        <div class="container">
             <p> login section</p>
             <div class="main">
                 <h2>Login here:</h2>
@@ -98,7 +102,7 @@
                     <input type="password" name="password" id="password"/>
                     <br/>
                     <br/>
-                    <input type="button" value="Login" id="submit" onclick="validate()"/>
+                    <input type="button" value="Login" id="submit" onclick="LoginValidate()"/>
                 </form>
             </div>
         </div>
@@ -138,15 +142,15 @@
         <br/>
         <div id="inputs">
             <ul>
-                <li> <label>Name: </label><input id="user" type="text"/> </li>
+                <li> <label>Name: </label><input id="lblUser" type="text"/> </li>
                 <li> <label>Score: </label><input id="lblScore" type="text"/> </li>
                 <li> <label>Time: </label><input id="lblTime" type="text"/> </li>
                 <li> <label>life: </label><input id="lblLife" type="text"/> </li>
             </ul>
         </div>
-        <canvas id="canvas" height="600" width="600"></canvas>
+        <canvas id="canvas" height="600" width="900"></canvas>
     </section>
-</content>
+</article>
 <div id="about">
     <dialog id="aboutWindow">
         <h3>About Us</h3>
@@ -162,8 +166,7 @@
 </div>
 
 
-<script src="myJs.js"></script>
-<script src="login.js"></script>
+
 <br/>
 <br/>
 <br/>

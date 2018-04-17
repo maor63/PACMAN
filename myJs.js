@@ -8,7 +8,7 @@ var pac_color;
 var start_time;
 var time_elapsed;
 var interval;
-var pacman_lives = 3;
+var pacman_lives;
 var direction = DrawPacmanRight;
 var Direction = Object.freeze({UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4});
 var GameItems = Object.freeze({
@@ -18,17 +18,19 @@ var GameItems = Object.freeze({
     OBSTACLE: 4,
     GHOST: 5,
     YELLOW_FOOD: 7,
-    ORANGE_FOOD: 6
+    ORANGE_FOOD: 6,
+    HEART: 3
 });
 var board_height = 10;
-var board_width = 10;
+var board_width = 15;
 var total_food = 80;
 var remain_food;
-var users = {};
-users['a'] = 'a';
 var ghosts_number;
-var heart = {};
-var clock = {};
+var heart;
+var clock;
+
+var currentUser;
+var loop_iterval = 150;
 //[type=text],input[type=password], input[type=number],input[type=email]
 
 
@@ -42,6 +44,9 @@ function InitGhosts() {
 }
 
 function Start() {
+    heart = {};
+    clock = {};
+    pacman_lives = 3;
     showSection("gameBoard");
     total_food = parseInt(document.getElementById('balls').value);
     ghosts_number = parseInt(document.getElementById('ghosts').value);
@@ -102,6 +107,7 @@ function Start() {
     heart.image.src = "Gallery/heart.png";
     heart.x = emptyCell[0];
     heart.y = emptyCell[1];
+    board[heart.x][heart.y] = GameItems.HEART;
 
     emptyCell = findRandomEmptyCell(board);
     clock = {};
@@ -128,7 +134,7 @@ function Start() {
     }, false);
     //Update pacman position on the board every 250ms
     $(document).ready(function () {
-        interval = setInterval(UpdatePosition, 150);
+        interval = setInterval(UpdatePosition, loop_iterval);
     });
 }
 
@@ -223,6 +229,8 @@ function Draw() {
     canvas.width = canvas.width; //clean board
     lblScore.value = score; //lbl = label
     lblTime.value = time_elapsed;
+    lblUser.value = currentUser;
+    lblLife.value = pacman_lives;
     for (var i = 0; i < board_width; i++) {
         for (var j = 0; j < board_height; j++) {
             var center = new Object();
@@ -267,11 +275,10 @@ function GhostEatsPacman() {
         //return;
     }
     else {
-        // window.clearInterval(interval);
         pacman_lives--;
         window.alert("You Lose!!!!!!!!!!! " + pacman_lives + " life left");
+        start_time = new Date();
         InitGhosts();
-        // Start();
     }
 }
 
@@ -486,6 +493,7 @@ function Expand(node, graph) {
 }
 
 function showSection(section) {
+    window.clearInterval(interval);
     var section1 = document.getElementById('welcome');
     section1.style.visibility = "hidden";
     var section2 = document.getElementById('register');
@@ -504,9 +512,56 @@ function showSection(section) {
 }
 
 function showAboutDialog() {
+    window.clearInterval(interval);
     document.getElementById("aboutWindow").showModal();
 }
 
 function closeAboutDialog() {
     document.getElementById("aboutWindow").close();
+    start_time = new Date();
+    interval = setInterval(UpdatePosition, loop_iterval);
 }
+
+var users = {};
+users['a'] = 'a';
+
+function Register() {
+    var username = document.getElementById("usernameR").value;
+    var password = document.getElementById("passwordR").value;
+    users[username] = password;
+    showSection("welcome");
+}
+
+function LoginValidate() {
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    if (username in users && users[username] === password) {
+        currentUser = username;
+        alert("found in users");
+        showSection('settings');
+        return false;
+    }
+
+    else{
+        alert("Login failed");
+        return false;
+    }
+}
+
+$(document).ready(function () {
+    showSection('welcome');
+});
+
+// $("#register").submit(function( event ) {
+//
+// });
+
+// $("#registerForm").validate({
+//     rules: {
+//         usernameR: "required",
+//         // email: {
+//         //     required: true,
+//         //     email: true
+//         // }
+//     }
+// });
