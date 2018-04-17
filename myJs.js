@@ -11,7 +11,7 @@ var interval;
 var pacman_lives = 3;
 var direction = DrawPacmanRight;
 var Direction = Object.freeze({UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4});
-var GameItems = Object.freeze({BLACK_FOOD: 1, PACMAN: 2, BLANK: 0, OBSTACLE: 4, GHOST: 5});
+var GameItems = Object.freeze({RED_FOOD: 1, PACMAN: 2, BLANK: 0, OBSTACLE: 4, GHOST: 5,YELLOW_FOOD: 7,ORANGE_FOOD: 6});
 var board_height = 10;
 var board_width = 15;
 var total_food = 80;
@@ -22,7 +22,7 @@ users['a']='a';
 
 //Start();
 
-function Start() {
+function Start(balls,ghosts,time) {
     context = canvas.getContext("2d");
     pacman_position = new Object();
     ghosts = [];
@@ -55,7 +55,7 @@ function Start() {
                 var randomNum = Math.random();
                 if (randomNum <= 1.0 * food_remain / cnt) {
                     food_remain--;
-                    board[i][j] = GameItems.BLACK_FOOD;
+                    board[i][j] = GameItems.RED_FOOD;
                 } else if (randomNum < 1.0 * (pacman_remain + food_remain) / cnt) {
                     pacman_position.i = i;
                     pacman_position.j = j;
@@ -162,10 +162,10 @@ function DrawPacmanUp(center) {
     DrawPacmanEye(center.x + 15, center.y + 5);
 }
 
-function DrawBlackFood(center) {
+function DrawBlackFood(center,color) {
     context.beginPath();
     context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
-    context.fillStyle = "black"; //color
+    context.fillStyle = color; //color
     context.fill();
 }
 
@@ -197,8 +197,8 @@ function Draw() {
             center.y = j * 60 + 30;
             if (board[i][j] == GameItems.PACMAN) {//2 means pacman
                 direction(center);
-            } else if (board[i][j] == GameItems.BLACK_FOOD) {//1 means food
-                DrawBlackFood(center);
+            } else if (board[i][j] == GameItems.RED_FOOD) {//1 means food
+                DrawBlackFood(center,"red");
             }
             else if (board[i][j] == GameItems.OBSTACLE) { // 4 means obstacle
                 DrawObstacle(center);
@@ -223,7 +223,7 @@ function GhostEatsPacman() {
     if (pacman_lives == 0) {
         window.clearInterval(interval);
         window.alert("Game Over");
-        // return;
+        return;
     }
     else {
         window.clearInterval(interval);
@@ -278,7 +278,7 @@ function UpdatePosition() {
             direction = DrawPacmanRight;
         }
     }
-    if (board[pacman_position.i][pacman_position.j] == GameItems.BLACK_FOOD) { //pacman eat food
+    if (board[pacman_position.i][pacman_position.j] == GameItems.RED_FOOD) { //pacman eat food
         score += 5;
         remain_food--;
     }
@@ -420,6 +420,8 @@ function showSection(section) {
     section3.style.visibility="hidden";
     var section4 = document.getElementById('gameBoard');
     section4.style.visibility="hidden";
+    var section1 = document.getElementById('settings');
+    section1.style.visibility="hidden";
 
     //show only one section
     var selected = document.getElementById(section);

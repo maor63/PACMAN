@@ -9,7 +9,7 @@
 
 </head>
 
-<body onload="showSection('gameBoard')">
+<body onload="showSection('settings')">
 
 <menu>
     <div id="nav_bar">
@@ -29,14 +29,17 @@
 <br/>
 <header>
     <h1 id="title">THE GREATEST PACMAN GAME!</h1>
+    <h4> Maor Reuven & Yael Sheinberg</h4>
+    <img src="Gallery/paclogo.png" alt="Logo">
 </header>
 <content>
     <section id="welcome">
         <p> welcome section</p>
     </section>
     <section id="register">
+        <div class="container2">
         <p> register section</p>
-
+        </div>
     </section>
     <section id="login">
         <br/>
@@ -57,7 +60,37 @@
                 </form>
             </div>
         </div>
-
+    </section>
+    <section id="settings">
+        <div class="container2">
+            <label><b>Number of Balls:  </b>
+                <input type = "number" id="balls"
+                       min = "50"
+                       max = "90"
+                       step = "1"
+                       value = "50" />
+            </label><br/> (Enter a number between 50 and 90)
+            <br/>
+            <label><b>Number of ghosts:  </b>
+                <input type = "number" id="ghosts"
+                       min = "1"
+                       max = "3"
+                       step = "1"
+                       value = "1" />
+            </label> <br/>(Enter a number between 1 and 3)
+            <br/>
+            <label><b>Time:  </b>
+                <input type = "number" id="time"
+                       min = "60"
+                       max = "6000"
+                       step = "1"
+                       value = "60" />
+            </label><br/> (Enter a number between 60 and 6000)
+            <br/>
+            <br/>
+            <input type="button" value="Start Game" id="startGame" onclick="startGame(balls,ghosts,time)"/>
+            <br/>
+        </div>
     </section>
     <section id="gameBoard">
         <br/>
