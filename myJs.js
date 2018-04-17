@@ -11,24 +11,41 @@ var interval;
 var pacman_lives = 3;
 var direction = DrawPacmanRight;
 var Direction = Object.freeze({UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4});
-var GameItems = Object.freeze({RED_FOOD: 1, PACMAN: 2, BLANK: 0, OBSTACLE: 4, GHOST: 5,YELLOW_FOOD: 7,ORANGE_FOOD: 6});
+var GameItems = Object.freeze({
+    RED_FOOD: 1,
+    PACMAN: 2,
+    BLANK: 0,
+    OBSTACLE: 4,
+    GHOST: 5,
+    YELLOW_FOOD: 7,
+    ORANGE_FOOD: 6
+});
 var board_height = 10;
 var board_width = 10;
 var total_food = 80;
 var remain_food;
-var users={};
-users['a']='a';
+var users = {};
+users['a'] = 'a';
+var balls ;
+var ghosts_number;
+var duration;
 
 
 //Start();
 
 function Start() {
+    showSection("gameBoard");
+    balls = parseInt(document.getElementById('balls').value);
+    ghosts_number = parseInt(document.getElementById('ghosts').value);
+    duration = parseInt(document.getElementById('duration').value);
     context = canvas.getContext("2d");
     pacman_position = new Object();
     ghosts = [];
     ghosts.push(new Ghost(0, 0, "green"));
-    // ghosts.push(new Ghost(0, board_height - 1, "green"));
-    // ghosts.push(new Ghost(board_width - 1, 0, "green"));
+    if (ghosts_number > 1)
+        ghosts.push(new Ghost(0, board_height - 1, "green"));
+    if (ghosts_number > 2)
+        ghosts.push(new Ghost(board_width - 1, 0, "green"));
     // ghosts.push(new Ghost(board_width - 1, board_height - 1, "green"));
     movingScore = new MovingScore(5, 0, "blue");
     board = new Array();
@@ -70,7 +87,7 @@ function Start() {
     }
     //Put all remaining food on the board
     var emptyCell;
-    if(pacman_remain > 0){
+    if (pacman_remain > 0) {
         emptyCell = findRandomEmptyCell(board);
         pacman_position.i = emptyCell[0];
         pacman_position.j = emptyCell[1];
@@ -200,7 +217,7 @@ function Draw() {
             if (board[i][j] == GameItems.PACMAN) {//2 means pacman
                 direction(center);
             } else if (board[i][j] == GameItems.RED_FOOD) {//1 means food
-                DrawFood(center,"red");
+                DrawFood(center, "red");
             }
             else if (board[i][j] == GameItems.OBSTACLE) { // 4 means obstacle
                 DrawObstacle(center);
@@ -354,7 +371,7 @@ function Ghost(x, y, color) {
     }
 
     this.NextMove = function () {
-        if(!this.moved) {
+        if (!this.moved) {
             this.moved = true;
             if (this.track.length > 0) {
                 var pos = this.track.pop();
@@ -426,27 +443,29 @@ function Expand(node, graph) {
     }
     return children;
 }
+
 function showSection(section) {
     var section1 = document.getElementById('welcome');
-    section1.style.visibility="hidden";
+    section1.style.visibility = "hidden";
     var section2 = document.getElementById('register');
-    section2.style.visibility="hidden";
+    section2.style.visibility = "hidden";
     var section3 = document.getElementById('login');
-    section3.style.visibility="hidden";
+    section3.style.visibility = "hidden";
     var section4 = document.getElementById('gameBoard');
-    section4.style.visibility="hidden";
+    section4.style.visibility = "hidden";
     var section1 = document.getElementById('settings');
-    section1.style.visibility="hidden";
+    section1.style.visibility = "hidden";
 
     //show only one section
     var selected = document.getElementById(section);
-    selected .style.visibility="visible";
+    selected.style.visibility = "visible";
 
 }
 
 function showAboutDialog() {
     document.getElementById("aboutWindow").showModal();
 }
+
 function closeAboutDialog() {
     document.getElementById("aboutWindow").close();
 }
