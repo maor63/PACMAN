@@ -29,6 +29,7 @@ users['a'] = 'a';
 // var balls ;
 var ghosts_number;
 var duration;
+var heart = {};
 
 
 //Start();
@@ -46,7 +47,6 @@ function Start() {
         ghosts.push(new Ghost(0, board_height - 1, "Gallery/monster2.png"));
     if (ghosts_number > 2)
         ghosts.push(new Ghost(board_width - 1, 0, "Gallery/monster3.png"));
-    // ghosts.push(new Ghost(board_width - 1, board_height - 1, "green"));
     movingScore = new MovingScore(5, 0, "Gallery/Pineapple.png");
     board = new Array();
     score = 0;
@@ -93,6 +93,14 @@ function Start() {
         pacman_position.j = emptyCell[1];
 
     }
+    emptyCell = findRandomEmptyCell(board);
+    heart = {};
+    heart.image = new Image();
+    heart.image.src = "Gallery/heart.png";
+    heart.x = emptyCell[0];
+    heart.y = emptyCell[1];
+
+
     while (food_remain > 0) {
         emptyCell = findRandomEmptyCell(board);
         board[emptyCell[0]][emptyCell[1]] = 1;
@@ -222,6 +230,7 @@ function Draw() {
 
         }
     }
+    context.drawImage(heart.image ,heart.x * 60,heart.y * 60,60,60);
     if (movingScore.alive) {
         context.drawImage(movingScore.image ,movingScore.x * 60,movingScore.y * 60,60,60);
     }
