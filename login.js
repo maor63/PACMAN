@@ -7,9 +7,10 @@ function validate() {
     if(username=='a'&&password=='a')
     {
         alert("good job successfully");
+        showSection('settings');
     }
-    if (username == "a" && password == "a") {
-
+    if (users.contains(username)&& users[username].value== password) {
+        alert("found in users");
         showSection('settings');
         //Start();// Redirecting to other page.
         return false;
@@ -21,4 +22,9 @@ function validate() {
         //alert("You have left "+attempt+" attempt;");
             return false;
     }
+}
+function Resgister() {
+    var username = document.getElementById("usernameR").value;
+    var password = document.getElementById("passwordR").value;
+
 }

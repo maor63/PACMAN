@@ -26,27 +26,30 @@ var total_food = 80;
 var remain_food;
 var users = {};
 users['a'] = 'a';
-// var balls ;
 var ghosts_number;
-var duration;
 var heart = {};
+var clock = {};
+//[type=text],input[type=password], input[type=number],input[type=email]
 
 
-//Start();
-
-function Start() {
-    showSection("gameBoard");
-    total_food = parseInt(document.getElementById('balls').value);
-    ghosts_number = parseInt(document.getElementById('ghosts').value);
-    duration = parseInt(document.getElementById('duration').value);
-    context = canvas.getContext("2d");
-    pacman_position = new Object();
+function InitGhosts() {
     ghosts = [];
     ghosts.push(new Ghost(0, 0, "Gallery/monster1.png"));
     if (ghosts_number > 1)
         ghosts.push(new Ghost(0, board_height - 1, "Gallery/monster2.png"));
     if (ghosts_number > 2)
         ghosts.push(new Ghost(board_width - 1, 0, "Gallery/monster3.png"));
+}
+
+function Start() {
+    showSection("gameBoard");
+    total_food = parseInt(document.getElementById('balls').value);
+    ghosts_number = parseInt(document.getElementById('ghosts').value);
+    time_elapsed = parseInt(document.getElementById('duration').value);
+    context = canvas.getContext("2d");
+    pacman_position = new Object();
+
+    InitGhosts();
     movingScore = new MovingScore(5, 0, "Gallery/Pineapple.png");
     board = new Array();
     score = 0;
@@ -55,7 +58,6 @@ function Start() {
     var food_remain = total_food;
     remain_food = total_food;
     var pacman_remain = 1;
-
     //Init the board: put pacman, obstacles and food
     start_time = new Date();
 
@@ -96,9 +98,18 @@ function Start() {
     emptyCell = findRandomEmptyCell(board);
     heart = {};
     heart.image = new Image();
+    heart.alive = true;
     heart.image.src = "Gallery/heart.png";
     heart.x = emptyCell[0];
     heart.y = emptyCell[1];
+
+    emptyCell = findRandomEmptyCell(board);
+    clock = {};
+    clock.image = new Image();
+    clock.alive = true;
+    clock.image.src = "Gallery/clock.png";
+    clock.x = emptyCell[0];
+    clock.y = emptyCell[1];
 
 
     while (food_remain > 0) {
@@ -210,8 +221,6 @@ function DrawGhost(ghost) {
 //Draw the board(Array) on the canvas
 function Draw() {
     canvas.width = canvas.width; //clean board
-    //canvas.width  = window.innerWidth;
-    //canvas.height = window.innerHeight;
     lblScore.value = score; //lbl = label
     lblTime.value = time_elapsed;
     for (var i = 0; i < board_width; i++) {
@@ -230,7 +239,12 @@ function Draw() {
 
         }
     }
-    context.drawImage(heart.image ,heart.x * 60,heart.y * 60,60,60);
+    if(clock.alive){
+        context.drawImage(clock.image, clock.x * 60, clock.y * 60, 60, 60);
+    }
+    if(heart.alive) {
+        context.drawImage(heart.image, heart.x * 60, heart.y * 60, 60, 60);
+    }
     if (movingScore.alive) {
         context.drawImage(movingScore.image ,movingScore.x * 60,movingScore.y * 60,60,60);
     }
@@ -241,26 +255,43 @@ function Draw() {
 
 }
 
+function GameOver() {
+    window.alert("Game Over");
+    window.clearInterval(interval);
+    showSection("welcome")
+}
+
 function GhostEatsPacman() {
     if (pacman_lives == 0) {
-        window.alert("Game Over");
-        window.clearInterval(interval);
-        showSection("welcome")
+        GameOver();
         //return;
     }
     else {
-        window.clearInterval(interval);
+        // window.clearInterval(interval);
         pacman_lives--;
         window.alert("You Lose!!!!!!!!!!! " + pacman_lives + " life left");
-        Start();
+        InitGhosts();
+        // Start();
     }
 }
 
 function CheckCollisions() {
     var dead = false;
-    if (board[movingScore.x][movingScore.y] == GameItems.PACMAN) { // pacman eats moving score
+    if (movingScore.alive && board[movingScore.x][movingScore.y] == GameItems.PACMAN) { // pacman eats moving score
         score += 50;
         movingScore.alive = false;
+        movingScore.x = -1;
+        movingScore.y = -1;
+    }
+
+    if (heart.alive && board[heart.x][heart.y] == GameItems.PACMAN) { // pacman eats moving score
+        pacman_lives++;
+        heart.alive = false;
+    }
+
+    if (clock.alive && board[clock.x][clock.y] == GameItems.PACMAN) { // pacman eats moving score
+        time_elapsed += 10;
+        clock.alive = false;
     }
 
     $.each(ghosts, function (i, ghost) {
@@ -318,7 +349,10 @@ function UpdatePosition() {
     movingScore.NextMove();
 
     var currentTime = new Date();
-    time_elapsed = (currentTime - start_time) / 1000;
+    time_elapsed -= (currentTime - start_time) / 1000;
+    start_time = currentTime;
+    if(time_elapsed <= 0)
+        GameOver();
     if (score >= 20 && time_elapsed <= 10) {//Change pacman image to green if you play well
         pac_color = "green";
     }

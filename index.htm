@@ -3,24 +3,23 @@
 
 <head>
     <title>The Greatest Pacman Game</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="newStyle.css">
     <link rel="icon" type="image/png" href="gallery/pacIcon.ico">
     <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
 
 </head>
 
-<body onload="showSection('login')">
+<body onload="showSection('welcome')">
 
 <menu>
     <div id="nav_bar">
         <div id="nav_wrapper">
-    <ul>
-        <li><a onclick="showSection('welcome')" href="#">welcome</a></li>
-        <li><a onclick="showSection('register')"href="#">register</a></li>
-        <li><a onclick="showSection('login')"href="#">Login</a></li>
-        <li><a onclick="showAboutDialog()" href="#">About</a></li>
-    </ul>
-
+        <ul>
+            <li><a onclick="showSection('welcome')" href="#">welcome</a></li>
+            <li><a onclick="showSection('register')"href="#">register</a></li>
+            <li><a onclick="showSection('login')"href="#">Login</a></li>
+            <li><a onclick="showAboutDialog()" href="#">About</a></li>
+        </ul>
         </div>
     </div>
 </menu>
@@ -30,22 +29,65 @@
 <header>
     <h1 id="title">THE GREATEST PACMAN GAME!</h1>
     <h4> Maor Reuven & Yael Sheinberg</h4>
-    <img src="Gallery/paclogo.png" alt="Logo">
 </header>
 <content>
     <section id="welcome">
-        <p> welcome section</p>
+        <h4 id="welocmeTitle"> Welcome !</h4>
+        <img src="Gallery/paclogo.png" alt="Logo">
+        <br/>
+        <div class="boxes">
+        <input type="button" value="Login" id="loginBtn" onclick="showSection('login')"/>
+        <input type="button" value="Register" id="registerBtn" onclick="showSection('register')"/>
+        </div>
     </section>
     <section id="register">
+        <br/>
+        <br/>
         <div class="container2">
         <p> register section</p>
+            <form method = "post" action = "http://www.deitel.com">
+                <p>
+                    <label>User Name: </label>
+                    <input type="text" name="usernameR" id="usernameR"/>
+                </p>
+                <p>
+                    <label>Password:   </label>
+                    <input type="password" name="passwordR" id="passwordR"/>
+                </p>
+                <p>
+                    <label>First Name: </label>
+                    <input type="text" name="firstname" id="firstName"/>
+                </p>
+                <p>
+                    <label>Last Name: </label>
+                    <input type="text" name="lastname" id="lastName"/>
+                </p>
+                <p>
+                    <label>Email:    </label>
+                        <input type = "email" placeholder = "name@domain.com"/>
+
+                </p>
+                <p>
+                    <label>Birth Date:
+                        <input type = "date" />
+                    </label>
+                </p>
+
+                <p>
+                    <input type = "submit" value = "Submit" onclick="Register()" />
+                    <input type = "reset" value = "Clear" />
+                </p>
+            </form>
+
+
         </div>
     </section>
     <section id="login">
         <br/>
         <br/>
-        <p> login section</p>
+
         <div class="container2">
+            <p> login section</p>
             <div class="main">
                 <h2>Login here:</h2>
                 <form id="form_id" method="post" name="loginForm">
@@ -94,13 +136,14 @@
     </section>
     <section id="gameBoard">
         <br/>
-        SCORE:
-        <input id="lblScore" type="text"/>
-        <br/>
-        TIME:
-        <input id="lblTime" type="text"/>
-        <br/>
-        <br/>
+        <div id="inputs">
+            <ul>
+                <li> <label>Name: </label><input id="user" type="text"/> </li>
+                <li> <label>Score: </label><input id="lblScore" type="text"/> </li>
+                <li> <label>Time: </label><input id="lblTime" type="text"/> </li>
+                <li> <label>life: </label><input id="lblLife" type="text"/> </li>
+            </ul>
+        </div>
         <canvas id="canvas" height="600" width="600"></canvas>
     </section>
 </content>
