@@ -6,6 +6,8 @@
     <link rel="stylesheet" type="text/css" href="newStyle.css">
     <link rel="icon" type="image/png" href="gallery/pacIcon.ico">
     <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
     <script src="myJs.js"></script>
     <script src="login.js"></script>
 
@@ -49,7 +51,7 @@
         <br/>
         <div class="container">
         <p> register section</p>
-            <form id="registerForm" method = "post" >
+            <form action="javascript:submit()" id="registerForm">
                 <p>
                     <label>User Name: </label>
                     <input type="text" name="usernameR" id="usernameR"/>
@@ -68,7 +70,7 @@
                 </p>
                 <p>
                     <label>Email:    </label>
-                        <input type = "email" placeholder = "name@domain.com"/>
+                        <input type = "email" name="email" placeholder = "name@domain.com"/>
 
                 </p>
                 <p>
@@ -78,7 +80,7 @@
                 </p>
 
                 <p>
-                    <input type = "button" value = "Submit" onclick="Register()" />
+                    <input type = "submit" value = "Submit" onclick="Register()" />
                     <input type = "reset" value = "Clear" />
                 </p>
             </form>

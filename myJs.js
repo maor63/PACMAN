@@ -23,7 +23,7 @@ var GameItems = Object.freeze({
 });
 var board_height = 10;
 var board_width = 15;
-var total_food = 80;
+var total_food;
 var remain_food;
 var ghosts_number;
 var heart;
@@ -31,6 +31,7 @@ var clock;
 
 var currentUser;
 var loop_iterval = 150;
+
 //[type=text],input[type=password], input[type=number],input[type=email]
 
 
@@ -77,17 +78,17 @@ function Start() {
             // put pacman and food at random places
             else {
                 var randomNum = Math.random();
-                if (randomNum <= 1.0 * food_remain / cnt) {
-                    food_remain--;
-                    board[i][j] = GameItems.RED_FOOD;
-                } else if (randomNum < 1.0 * (pacman_remain + food_remain) / cnt) {
-                    pacman_position.i = i;
-                    pacman_position.j = j;
-                    pacman_remain--;
-                    board[i][j] = GameItems.PACMAN;
-                } else {
+                // if (randomNum <= 1.0 * food_remain / cnt) {
+                //     food_remain--;
+                //     board[i][j] = GameItems.RED_FOOD;
+                // if (randomNum < 1.0 * (pacman_remain + food_remain) / cnt) {
+                //     pacman_position.i = i;
+                //     pacman_position.j = j;
+                //     pacman_remain--;
+                //     board[i][j] = GameItems.PACMAN;
+                //  else {
                     board[i][j] = GameItems.BLANK;
-                }
+                // }
                 cnt--;
             }
         }
@@ -117,11 +118,29 @@ function Start() {
     clock.x = emptyCell[0];
     clock.y = emptyCell[1];
 
+    let red_food = Math.floor(total_food * 0.1);
+    let orange_food =  Math.floor(total_food * 0.3);
+    let yellow_food =  Math.floor(total_food * 0.6);
 
-    while (food_remain > 0) {
+    while (red_food > 0) {
+
         emptyCell = findRandomEmptyCell(board);
-        board[emptyCell[0]][emptyCell[1]] = 1;
-        food_remain--;
+        board[emptyCell[0]][emptyCell[1]] = GameItems.RED_FOOD;
+        red_food--;
+    }
+
+    while (orange_food > 0) {
+
+        emptyCell = findRandomEmptyCell(board);
+        board[emptyCell[0]][emptyCell[1]] = GameItems.ORANGE_FOOD;
+        orange_food--;
+    }
+
+    while (yellow_food > 0) {
+
+        emptyCell = findRandomEmptyCell(board);
+        board[emptyCell[0]][emptyCell[1]] = GameItems.YELLOW_FOOD;
+        yellow_food--;
     }
 
     //Init listeners to identify keyboard clicks
@@ -221,7 +240,7 @@ function DrawObstacle(center) {
 }
 
 function DrawGhost(ghost) {
-    context.drawImage(ghost.image,ghost.x * 60,ghost.y * 60,60,60);
+    context.drawImage(ghost.image, ghost.x * 60, ghost.y * 60, 60, 60);
 }
 
 //Draw the board(Array) on the canvas
@@ -241,20 +260,26 @@ function Draw() {
             } else if (board[i][j] == GameItems.RED_FOOD) {//1 means food
                 DrawFood(center, "red");
             }
+            else if (board[i][j] == GameItems.YELLOW_FOOD) {//1 means food
+                DrawFood(center, "yellow");
+            }
+            else if (board[i][j] == GameItems.ORANGE_FOOD) {//1 means food
+                DrawFood(center, "orange");
+            }
             else if (board[i][j] == GameItems.OBSTACLE) { // 4 means obstacle
                 DrawObstacle(center);
             }
 
         }
     }
-    if(clock.alive){
+    if (clock.alive) {
         context.drawImage(clock.image, clock.x * 60, clock.y * 60, 60, 60);
     }
-    if(heart.alive) {
+    if (heart.alive) {
         context.drawImage(heart.image, heart.x * 60, heart.y * 60, 60, 60);
     }
     if (movingScore.alive) {
-        context.drawImage(movingScore.image ,movingScore.x * 60,movingScore.y * 60,60,60);
+        context.drawImage(movingScore.image, movingScore.x * 60, movingScore.y * 60, 60, 60);
     }
     $.each(ghosts, function (i, ghost) {
         DrawGhost(ghost);
@@ -275,6 +300,7 @@ function GhostEatsPacman() {
         //return;
     }
     else {
+        keysDown = {};
         pacman_lives--;
         window.alert("You Lose!!!!!!!!!!! " + pacman_lives + " life left");
         start_time = new Date();
@@ -340,7 +366,15 @@ function UpdatePosition() {
         }
     }
     if (board[pacman_position.i][pacman_position.j] == GameItems.RED_FOOD) { //pacman eat food
+        score += 25;
+        remain_food--;
+    }
+    if (board[pacman_position.i][pacman_position.j] == GameItems.YELLOW_FOOD) { //pacman eat food
         score += 5;
+        remain_food--;
+    }
+    if (board[pacman_position.i][pacman_position.j] == GameItems.ORANGE_FOOD) { //pacman eat food
+        score += 15;
         remain_food--;
     }
     board[pacman_position.i][pacman_position.j] = GameItems.PACMAN; // put pacman
@@ -358,7 +392,7 @@ function UpdatePosition() {
     var currentTime = new Date();
     time_elapsed -= (currentTime - start_time) / 1000;
     start_time = currentTime;
-    if(time_elapsed <= 0)
+    if (time_elapsed <= 0)
         GameOver();
     if (score >= 20 && time_elapsed <= 10) {//Change pacman image to green if you play well
         pac_color = "green";
@@ -525,10 +559,15 @@ function closeAboutDialog() {
 var users = {};
 users['a'] = 'a';
 
-function Register() {
+function submit() {
     var username = document.getElementById("usernameR").value;
     var password = document.getElementById("passwordR").value;
     users[username] = password;
+}
+
+function Register() {
+    validate_register();
+    submit();
     showSection("welcome");
 }
 
@@ -542,7 +581,7 @@ function LoginValidate() {
         return false;
     }
 
-    else{
+    else {
         alert("Login failed");
         return false;
     }
@@ -552,16 +591,66 @@ $(document).ready(function () {
     showSection('welcome');
 });
 
-// $("#register").submit(function( event ) {
-//
-// });
+function validate_register() {
+    // $.validator.addMethod("pwcheck", function (value) {
+    //     return /^[A-Za-z0-9\d=!\-@._*]*$/.test(value) // consists of only these
+    //         && /[a-z]/.test(value) // has a lowercase letter
+    //         && /\d/.test(value) // has a digit
+    // });
+    // $(function () {
+    //     // Initialize form validation on the registration form.
+    //     // It has the name attribute "registration"
+        $("registerForm").validate({
+            // Specify validation rules
+            rules: {
+                // The key name on the left side is the name attribute
+                // of an input field. Validation rules are defined
+                // on the right side
+                firstname: {
+                    pattern: "^[a-zA-Z_]*$",
+                    required: true
+                },
+                lastname: {
+                    pattern: "^[a-zA-Z_]*$",
+                    required: true
+                },
+                email: {
+                    required: true,
+                    // Specify that email should be validated
+                    // by the built-in "email" rule
+                    email: true
+                },
+                passwordR: {
+                    required: true,
+                    pwcheck: true,
+                    minlength: 8
+                }
+            },
+            // Specify validation error messages
+            messages: {
+                firstname: {
+                    pattern: "please enter letters only",
+                    required: "Please enter your firstname"
+                },
+                lastname: {
+                    pattern: "please enter letters only",
+                    required: "Please enter your lastname"
+                },
+                passwordR: {
+                    required: "Please provide a passwords",
+                    pwcheck: "Please provide letters and digits",
+                    minlength: "Your password must be at least 8 characters long"
+                },
+                email: "Please enter a valid email address"
+            },
+            // Make sure the form is submitted to the destination defined
+            // in the "action" attribute of the form when valid
+            // submitHandler: function (form) {
+            //     form.submit();
+            // }
+        });
+    // });
+}
 
-// $("#registerForm").validate({
-//     rules: {
-//         usernameR: "required",
-//         // email: {
-//         //     required: true,
-//         //     email: true
-//         // }
-//     }
-// });
+
+
