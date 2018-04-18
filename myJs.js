@@ -56,7 +56,7 @@ function Start() {
     pacman_position = new Object();
 
     InitGhosts();
-    movingScore = new MovingScore(5, 0, "Gallery/Pineapple.png");
+    movingScore = new MovingScore(5, 0, "Gallery/star.png");
     board = new Array();
     score = 0;
     pac_color = "yellow";
@@ -258,13 +258,13 @@ function Draw() {
             if (board[i][j] == GameItems.PACMAN) {//2 means pacman
                 direction(center);
             } else if (board[i][j] == GameItems.RED_FOOD) {//1 means food
-                DrawFood(center, "red");
+                DrawFood(center, "#ffb3b3");
             }
             else if (board[i][j] == GameItems.YELLOW_FOOD) {//1 means food
-                DrawFood(center, "yellow");
+                DrawFood(center, "#660066");
             }
             else if (board[i][j] == GameItems.ORANGE_FOOD) {//1 means food
-                DrawFood(center, "orange");
+                DrawFood(center, "#002db3");
             }
             else if (board[i][j] == GameItems.OBSTACLE) { // 4 means obstacle
                 DrawObstacle(center);
@@ -528,6 +528,8 @@ function Expand(node, graph) {
 
 function showSection(section) {
     window.clearInterval(interval);
+    document.getElementById("form_id").reset();
+    document.getElementById("registerForm").reset();
     var section1 = document.getElementById('welcome');
     section1.style.visibility = "hidden";
     var section2 = document.getElementById('register');
@@ -542,7 +544,6 @@ function showSection(section) {
     //show only one section
     var selected = document.getElementById(section);
     selected.style.visibility = "visible";
-
 }
 
 function showAboutDialog() {
@@ -563,12 +564,15 @@ function submit() {
     var username = document.getElementById("usernameR").value;
     var password = document.getElementById("passwordR").value;
     users[username] = password;
+    document.getElementById("registerForm").reset();
+    showSection("welcome");
 }
 
 function Register() {
+    showSection("register");
     validate_register();
-    submit();
-    showSection("welcome");
+    //submit();
+    //showSection("welcome");
 }
 
 function LoginValidate() {
@@ -577,12 +581,14 @@ function LoginValidate() {
     if (username in users && users[username] === password) {
         currentUser = username;
         alert("found in users");
+        document.getElementById("form_id").reset();
         showSection('settings');
         return false;
     }
 
     else {
         alert("Login failed");
+        document.getElementById("form_id").reset();
         return false;
     }
 }
@@ -592,15 +598,16 @@ $(document).ready(function () {
 });
 
 function validate_register() {
-    // $.validator.addMethod("pwcheck", function (value) {
-    //     return /^[A-Za-z0-9\d=!\-@._*]*$/.test(value) // consists of only these
-    //         && /[a-z]/.test(value) // has a lowercase letter
-    //         && /\d/.test(value) // has a digit
-    // });
-    // $(function () {
+    showSection("register");
+     $.validator.addMethod("pwcheck", function (value) {
+         return /^[A-Za-z0-9\d=!\-@._*]*$/.test(value) // consists of only these
+             && /[a-z]/.test(value) // has a lowercase letter
+             && /\d/.test(value) // has a digit
+     });
+     $(function () {
     //     // Initialize form validation on the registration form.
     //     // It has the name attribute "registration"
-        $("registerForm").validate({
+        $("#registerForm").validate({
             // Specify validation rules
             rules: {
                 // The key name on the left side is the name attribute
@@ -608,6 +615,9 @@ function validate_register() {
                 // on the right side
                 firstname: {
                     pattern: "^[a-zA-Z_]*$",
+                    required: true
+                },
+                usernameR: {
                     required: true
                 },
                 lastname: {
@@ -630,11 +640,14 @@ function validate_register() {
             messages: {
                 firstname: {
                     pattern: "please enter letters only",
-                    required: "Please enter your firstname"
+                    required: "Please enter your first name"
+                },
+                usernameR: {
+                    required: "Please enter a user name"
                 },
                 lastname: {
                     pattern: "please enter letters only",
-                    required: "Please enter your lastname"
+                    required: "Please enter your last name"
                 },
                 passwordR: {
                     required: "Please provide a passwords",
@@ -645,12 +658,35 @@ function validate_register() {
             },
             // Make sure the form is submitted to the destination defined
             // in the "action" attribute of the form when valid
-            // submitHandler: function (form) {
-            //     form.submit();
-            // }
+             submitHandler: function (form) {
+                 form.submit();
+             }
         });
-    // });
+     });
 }
 
-
+function checkSettings(){
+    var cballs=parseInt(document.getElementById('balls').value);
+    var cghots=parseInt(document.getElementById('ghosts').value);
+    var dur=parseInt(document.getElementById('duration').value);
+    if(cballs<50 || cballs>90){
+        window.alert("Number of balls have to be between 50 to 90")
+    }
+    else{
+        if(cghots<1||cghots>3)
+        {
+            window.alert("Number of ghosts have to be between 1 to 3")
+        }
+        else
+        {
+            if(dur<60)
+            {
+                window.alert("The duration of the game has to be over 60 sec")
+            }
+            else
+                Start();
+        }
+    }
+    return false;
+}
 

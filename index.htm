@@ -5,12 +5,9 @@
     <title>The Greatest Pacman Game</title>
     <link rel="stylesheet" type="text/css" href="newStyle.css">
     <link rel="icon" type="image/png" href="gallery/pacIcon.ico">
-    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src = "jquery.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>
-    <script src="myJs.js"></script>
-    <script src="login.js"></script>
-
 </head>
 
 <body>
@@ -26,7 +23,7 @@
     <div id="nav_bar">
         <ul>
             <li><a onclick="showSection('welcome')" href="#">welcome</a></li>
-            <li><a onclick="showSection('register')"href="#">register</a></li>
+            <li><a onclick="Register()" href="#">register</a></li>
             <li><a onclick="showSection('login')"href="#">Login</a></li>
             <li><a onclick="showAboutDialog()" href="#">About</a></li>
         </ul>
@@ -38,20 +35,18 @@
 
 <article>
     <section id="welcome">
-        <h2 id="welocmeTitle"> Welcome !</h2>
+        <h2 id="welcomeTitle"> Welcome !</h2>
         <img src="Gallery/logo2.png" alt="Logo" >
         <br/>
         <div class="boxes">
         <input type="button" value="Login" id="loginBtn" onclick="showSection('login')"/>
-        <input type="button" value="Register" id="registerBtn" onclick="showSection('register')"/>
+        <input type="button" value="Register" id="registerBtn" onclick="Register()"/>
         </div>
     </section>
     <section id="register">
-        <br/>
-        <br/>
         <div class="container">
-        <p> register section</p>
-            <form action="javascript:submit()" id="registerForm">
+        <h4> Register here:</h4>
+            <form action="javascript:submit()" id="registerForm" name="registerForm">
                 <p>
                     <label>User Name: </label>
                     <input type="text" name="usernameR" id="usernameR"/>
@@ -62,25 +57,23 @@
                 </p>
                 <p>
                     <label>First Name: </label>
-                    <input type="text" name="firstname" id="firstName"/>
+                    <input type="text" name="firstname" id="firstname"/>
                 </p>
                 <p>
                     <label>Last Name: </label>
-                    <input type="text" name="lastname" id="lastName"/>
+                    <input type="text" name="lastname" id="lastname"/>
                 </p>
                 <p>
                     <label>Email:    </label>
                         <input type = "email" name="email" placeholder = "name@domain.com"/>
-
                 </p>
                 <p>
                     <label>Birth Date:
                         <input type = "date" />
                     </label>
                 </p>
-
                 <p>
-                    <input type = "submit" value = "Submit" onclick="Register()" />
+                    <input type = "submit" value = "Submit" />
                     <input type = "reset" value = "Clear" />
                 </p>
             </form>
@@ -110,7 +103,7 @@
         </div>
     </section>
     <section id="settings">
-        <div class="container2">
+        <div class="container">
             <label><b>Number of Balls:  </b>
                 <input type = "number" id="balls"
                        min = "50"
@@ -136,7 +129,7 @@
             </label><br/> (Enter a number between 60 and 6000)
             <br/>
             <br/>
-            <input type="button" value="Start Game" id="startGame" onclick="Start()"/>
+            <input type="button" value="Start Game" id="startGame" onclick="checkSettings()"/>
             <br/>
         </div>
     </section>
@@ -151,6 +144,39 @@
             </ul>
         </div>
         <canvas id="canvas" height="600" width="900"></canvas>
+        <table id="mikra" border="3"  bordercolor="#99e6e6" align="center" align-text="center">
+            <tr>
+                <th colspan="3">POINTS IN THE GAME:</th>
+            </tr>
+            <tr>
+                <th>Shape</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td><img src="Gallery/blue.png" alt=""  height=30 width=30></img></td>
+                <td height=60 width=60>5  points</td>
+            </tr>
+            <tr>
+                <td><img src="Gallery/purple.png" alt=""  height=30 width=30></img></td>
+                <td  height=60 width=60>15 points</td>
+            </tr>
+            <tr>
+                <td><img src="Gallery/pink.png" alt="" height=30 width=30></img></td>
+                <td border=4 height=60 width=60>25 points</td>
+            </tr>
+            <tr>
+                <td><img src="Gallery/star.png" alt="" height=30 width=30></img></td>
+                <td border=4 height=60 width=60>50 points</td>
+            </tr>
+            <tr>
+                <td><img src="Gallery/clock.png" alt="" height=30 width=30></img></td>
+                <td border=4 height=60 width=60>Extra 10 sec</td>
+            </tr>
+            <tr>
+                <td><img src="Gallery/heart.png" alt="" height=30 width=30></img></td>
+                <td border=4 height=60 width=60>Extra life</td>
+            </tr>
+        </table>
     </section>
 </article>
 <div id="about">
@@ -173,7 +199,7 @@
 <br/>
 <br/>
 <footer> The game was created by Maor and Yael. <a href="mailto:sheinbey@post.bgu.ac.il?subject=The greatest pacman game review">Contact Us.</a></footer>
-
+<script src="myJs.js"></script>
 </body>
 
 </html>

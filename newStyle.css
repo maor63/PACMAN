@@ -1,5 +1,5 @@
 #nav_bar ul {
-    top: 104px;
+    top: 134px;
     position: absolute;
     width: 100%;
     left: 0;
@@ -7,7 +7,7 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #333;
+
 }
 
 #nav_bar li {
@@ -35,7 +35,7 @@ header ul {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #333;
+    background-color: rgba(42, 80, 175, 0.6);;
 }
 
 header li {
@@ -45,15 +45,16 @@ header li {
 header h4 {
     padding-left: 50%;
     float: right;
+    color: #ffc51f;
 }
 
 h1{
-    font-family: sans-serif;
-    text-shadow: 0px -11px 10px #e6e6ff, 0px -3px 9px #cfffe8 ;
+    font-family:Trebuchet MS;
+    text-shadow: 0px -11px 10px #e2ff9a, 0px -3px 9px #cfffe8 ;
     font-size: 3.2em;
     color: #fff;
     text-align: center;
-    padding: 10px 0px 10px 0px;
+    padding: 15px 50px 10px 0px;
 
 }
 
@@ -111,7 +112,9 @@ input[type=reset]:hover {
     width: 70%;
     text-align: center;
     margin: 0 auto;
-    font-family: sans-serif;
+    font-family:Trebuchet MS;
+    background-color: #cccccc;
+    background-image: radial-gradient(#52d3ff, #3bf3ff);
 }
 
 #inputs ul {
@@ -131,4 +134,52 @@ input[type=reset]:hover {
 #gameBoard{
     margin-left: 25%;
     position: fixed;
+}
+footer
+{
+    font-weight: bold;
+    position: absolute;
+    height: 40px;
+    font-family: sans-serif;
+    text-color : green;
+    top: 940px;
+    left: 0px;
+    text-align: center;
+    width: 100%;
+}
+table ,td,tr ,th{
+    font-weight: bold;
+    border-radius: 1em;
+    font-weight: bold;
+
+}
+#mikra{
+    position: fixed;
+    top: 320px;
+    left: 90px;
+}
+canvas{
+    border: 10px;
+    background: rgba(82, 211, 255, 0.6);
+    border-radius: 1em;
+    border-color: #b9ffbe;
+
+    margin: auto;
+}
+body{
+    font-family:Trebuchet MS;
+    background: url(gallery/tov.png)no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: 100% 100%;
+}
+ #welcomeTitle{
+     font-family:Trebuchet MS;
+     text-shadow: 0px -11px 10px #e2ff9a, 0px -3px 9px #cfffe8 ;
+     font-size: 3.2em;
+     color: #fff;
+     text-align: center;
+     padding: 15px 50px 10px 0px;
+
 }
