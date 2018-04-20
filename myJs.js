@@ -33,6 +33,7 @@ var clock;
 
 var currentUser;
 var loop_iterval = 150;
+var game_sound;
 
 //[type=text],input[type=password], input[type=number],input[type=email]
 
@@ -78,12 +79,33 @@ function InitFood(emptyCell) {
     }
 }
 
+
+
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    };
+
+    this.stop = function(){
+        this.sound.pause();
+    }
+}
+
 function Start() {
+    game_sound = new sound("Gallery/feeling.mp3");
+    game_sound.play();
     pacman_lives = 3;
     showSection("gameBoard");
     total_food = parseInt(document.getElementById('balls').value);
     ghosts_number = parseInt(document.getElementById('ghosts').value);
-    time_elapsed = parseInt(document.getElementById('duration').value);
+    // time_elapsed = parseInt(document.getElementById('duration').value);
+    time_elapsed = 10;
     context = canvas.getContext("2d");
     pacman_position = new Object();
 
@@ -112,14 +134,16 @@ function Start() {
         }
     }
     InitGhosts();
-    movingScore = new MovingScore(5, 0, "Gallery/star.png");
+    var emptyCell;
+    emptyCell = findRandomEmptyCell(board);
+    movingScore = new MovingScore(emptyCell[0], emptyCell[1], "Gallery/star.png");
     board[movingScore.x][movingScore.y] = GameItems.MOVING_SCORE;
     //Put all remaining food on the board
-    var emptyCell;
+
     emptyCell = findRandomEmptyCell(board);
     pacman_position.i = emptyCell[0];
     pacman_position.j = emptyCell[1];
-
+    board[pacman_position.i][pacman_position.j] = GameItems.PACMAN;
 
     emptyCell = findRandomEmptyCell(board);
     heart = new GameObject("Gallery/heart.png",emptyCell[0], emptyCell[1]);
@@ -277,9 +301,7 @@ function Draw() {
 }
 
 function GameOver() {
-    window.alert("Game Over");
-    window.clearInterval(interval);
-    showSection("welcome")
+    checkEndResult()
 }
 
 function GhostEatsPacman() {
@@ -391,12 +413,43 @@ function UpdatePosition() {
         pac_color = "green";
     }
     if (score >= 200 || remain_food === 0) {//game ended
-        window.alert("Game completed");
-        window.clearInterval(interval);
+        checkEndResult()
     }
     else {
         Draw();
     }
+}
+
+function checkEndResult() {
+    game_sound.stop();
+    window.clearInterval(interval);
+    $('#resultWindow').html('<br/>\n' +
+    '        <input type="button" value="New Game" class="newgameBtn" style="background-color: #ffdd35" onclick=\'showSection("settings");closeEndResultDialog();\'/>\n' +
+    '        <input type="button" value ="Close" class= "closeBtn"  style="background-color: #ffdd35" onclick="closeEndResultDialog()"></inputbutton>\n' +
+    '        <br/>');
+    if(pacman_lives === 0){
+        $('#resultWindow').prepend('<img src="gallery/gameoverblue.jpg" alt="gameover" >');
+        document.getElementById("resultWindow").showModal();
+    }
+    else if(time_elapsed <= 0)
+    {// if time =0 no more time
+        if(score < 150){//points less then 150
+            $('#resultWindow').prepend('<img src="gallery/bigwin.jpg" alt="gameover" >' +
+                '<h3>You can do better, final score: '+ score +'  </h3>');
+            document.getElementById("resultWindow").showModal();
+        }
+        else{
+            $('#resultWindow').prepend('<img src="gallery/bigwin.jpg" alt="gameover" height="100px">' +
+                '<h3>Well done, final score: '+ score +'  </h3>');
+            document.getElementById("resultWindow").showModal();
+        }
+    }
+    else{//if ate all of the balls
+        $('#resultWindow').prepend('<img src="gallery/bigwin.jpg" alt="gameover" >' +
+            '<h3>We Have A Winner!!!</h3>');
+        document.getElementById("resultWindow").showModal();
+    }
+
 }
 
 function MovingScore(x, y, image) {
@@ -486,7 +539,7 @@ function BFS(Start) {
     stack.unshift(Start);
     while (stack.length > 0) {
         var node = stack.pop();
-        if (board[node.x][node.y] == GameItems.PACMAN) {
+        if (board[node.x][node.y] === GameItems.PACMAN) {
             var track = new Array();
             while (node.preNode != null) {
                 track.push(node);
@@ -557,6 +610,10 @@ function closeAboutDialog() {
     document.getElementById("aboutWindow").close();
     start_time = new Date();
     interval = setInterval(UpdatePosition, loop_iterval);
+}
+
+function closeEndResultDialog() {
+    document.getElementById("resultWindow").close();
 }
 
 var users = {};
