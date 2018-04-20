@@ -16,7 +16,7 @@
     <ul>
         <li><img src="gallery/logo.png" alt="Logo" ></li>
         <li><h1 id="title">THE GREATEST PACMAN GAME!</h1></li>
-        <li><h4> Maor Reuven & Yael Sheinberg</h4></li>
+        <li><h4> Maor Reuben and Yael Sheinberg 308447010</h4></li>
     </ul>
 </header>
 <menu>
@@ -35,8 +35,8 @@
 
 <article>
     <section id="welcome">
-        <h2 id="welcomeTitle"> Welcome !</h2>
-        <img src="Gallery/logo2.png" alt="Logo" >
+        <h2 id="welcomeTitle">Welcome !</h2>
+        <img id="imgWelcome" src="Gallery/logo2.png" alt="Logo" >
         <br/>
         <div class="boxes">
         <input type="button" value="Login" id="loginBtn" onclick="showSection('login')"/>
@@ -45,7 +45,7 @@
     </section>
     <section id="register">
         <div class="container">
-        <h4> Register here:</h4>
+        <h2> Register here:</h2>
             <form action="javascript:submit()" id="registerForm" name="registerForm">
                 <p>
                     <label>User Name: </label>
@@ -142,6 +142,8 @@
                 <li> <label>life: </label><input id="lblLife" type="text"/> </li>
             </ul>
         </div>
+        <br/>
+        <br/>
         <canvas id="canvas" height="600" width="900"></canvas>
         <table id="mikra" border="3"  bordercolor="#99e6e6" align="center" align-text="center">
             <tr>
@@ -153,42 +155,42 @@
             </tr>
             <tr>
                 <td><img src="Gallery/blue.png" alt=""  height=30 width=30></img></td>
-                <td height=60 width=60>5  points</td>
+                <td height=40 width=60>5  points</td>
             </tr>
             <tr>
                 <td><img src="Gallery/purple.png" alt=""  height=30 width=30></img></td>
-                <td  height=60 width=60>15 points</td>
+                <td  height=40 width=60>15 points</td>
             </tr>
             <tr>
                 <td><img src="Gallery/pink.png" alt="" height=30 width=30></img></td>
-                <td border=4 height=60 width=60>25 points</td>
+                <td border=4 height=40 width=60>25 points</td>
             </tr>
             <tr>
                 <td><img src="Gallery/star.png" alt="" height=30 width=30></img></td>
-                <td border=4 height=60 width=60>50 points</td>
+                <td border=4 height=40 width=60>50 points</td>
             </tr>
             <tr>
                 <td><img src="Gallery/clock.png" alt="" height=30 width=30></img></td>
-                <td border=4 height=60 width=60>Extra 10 sec</td>
+                <td border=4 height=40 width=60>Extra 10 sec</td>
             </tr>
             <tr>
                 <td><img src="Gallery/heart.png" alt="" height=30 width=30></img></td>
-                <td border=4 height=60 width=60>Extra life</td>
+                <td border=4 height=40 width=60>Extra life</td>
             </tr>
         </table>
-        <input type="button" value="New Game" style="background-color: #ffdd35; color:black" class="newgameBtn" onclick='showSection("settings")'>
+        <input type="button" id="btnBoard" value="New Game" style="background-color: #ffdd35; color:black;
+         font-weight: bold" class="newgameBtn" onclick='showSection("settings")'>
     </section>
 </article>
 <div id="about">
     <dialog id="aboutWindow">
-        <h3>About Us</h3>
-        <p> Submmiters: Maor Reuven and Yael Sheinberg, SISE students 3rd year </p>
+        <h2><b>About Us</b></h2>
+        <p> Submmiters: Maor Reuven and Yael Sheinberg, SISE students in 3rd year </p>
         <br/>
-        <p>We did not use templates </p><br/>
+        <p>We did not use templates but we used jQuery plugins for validation of the registration form.</p><br/>
         <p>The struggles that we had were mainly about the design and colors of the page</p>
         <br/>
-        <br/>
-        <button onclick="closeAboutDialog()">Close</button>
+        <input type="button" value="Close" class="closeBtn" onclick="closeAboutDialog()">
         <br/>
     </dialog>
 </div>
@@ -197,7 +199,7 @@
     <dialog id="resultWindow">
     </dialog>
 </div>
-<audio
+
 <br/>
 <br/>
 <br/>

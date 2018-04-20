@@ -1,5 +1,5 @@
 #nav_bar ul {
-    top: 134px;
+    top: 100px;
     position: absolute;
     width: 100%;
     left: 0;
@@ -7,7 +7,6 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
-
 }
 
 #nav_bar li {
@@ -18,7 +17,7 @@
     display: block;
     color: white;
     text-align: center;
-    padding: 14px 16px;
+    padding: 5px 15px;
     text-decoration: none;
 }
 
@@ -37,33 +36,32 @@ header ul {
     overflow: hidden;
     background-color: rgba(42, 80, 175, 0.6);;
 }
-
 header li {
     float: left;
 }
 
 header h4 {
-    padding-left: 50%;
+    /*padding-left: 50%;*/
+    text-align:right;
+    position: absolute;
     float: right;
     color: #ffc51f;
 }
 
 h1{
     font-family:Trebuchet MS;
-    text-shadow: 0px -11px 10px #e2ff9a, 0px -3px 9px #cfffe8 ;
+    /*text-shadow: 0px -11px 10px #e2ff9a, 0px -3px 9px #cfffe8 ;*/
     font-size: 3.2em;
-    color: #fff;
-    text-align: center;
-    padding: 15px 50px 10px 0px;
-
+    color: #9346c8;
+    /*text-align: center;*/
+    padding: 0px 0px 0px 0px;
 }
-
 section
 {
-    position: fixed;
-    top:200px;
+    position: absolute;
+    top:120px;
     display: block;
-    margin-left: 35%;
+    margin-left: 30%;
     margin-right: auto;
     width: 500px;
     height: 500px;
@@ -107,9 +105,9 @@ input[type=reset]:hover {
 
 .container {
     border-radius: 5px;
+    top:120px;
     background-color: #7debff;
-    padding: 30px;
-    width: 70%;
+    padding: 5px;
     text-align: center;
     margin: 0 auto;
     font-family:Trebuchet MS;
@@ -118,7 +116,7 @@ input[type=reset]:hover {
 }
 
 #inputs ul {
-    top: 130px;
+    top: 110px;
     left: 25%;
     position: fixed;
     width: 100%;
@@ -142,7 +140,7 @@ footer
     height: 40px;
     font-family: sans-serif;
     text-color : green;
-    top: 940px;
+    top: 900px;
     left: 0px;
     text-align: center;
     width: 100%;
@@ -155,15 +153,19 @@ table ,td,tr ,th{
 }
 #mikra{
     position: fixed;
-    top: 320px;
-    left: 90px;
+    top: 200px;
+    left: 100px;
+}
+#btnBoard{
+    position: fixed;
+    left: 100px;
+    top: 600px;
 }
 canvas{
     border: 10px;
     background: rgba(82, 211, 255, 0.6);
     border-radius: 1em;
     border-color: #b9ffbe;
-
     margin: auto;
 }
 body{
@@ -176,20 +178,34 @@ body{
 }
  #welcomeTitle{
      font-family:Trebuchet MS;
-
      font-size: 4.2em;
      color: #ffb32d;
-     
      text-align: center;
-     padding: 15px 50px 10px 0px;
-
+}
+#imgWelcome{
+    margin: auto;
+}
+.boxes{
+    align-items: center;
 }
  #loginBtn,#registerBtn{
      width: 200px;
      height: 70px;
+     font-size : 20px;
+     font-weight: bold;
  }
  .newgameBtn, .closeBtn{
      width: 200px;
      height: 70px;
-     background-color: #ffdd35;
+     background-color: #1a3aff;
+     font-weight: bold;
+     font-size : 17px;
+
  }
+#resultWindow,#aboutWindow{
+    background: #ffdb4d;
+    text-align: center;
+}
+h2{
+    -webkit-margin-after: 0em;
+}
