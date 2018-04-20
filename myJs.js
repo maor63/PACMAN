@@ -421,7 +421,6 @@ function UpdatePosition() {
 }
 
 function checkEndResult() {
-    game_sound.stop();
     window.clearInterval(interval);
     $('#resultWindow').html('<br/>\n' +
     '        <input type="button" value="New Game" class="newgameBtn" style="background-color: #ffdd35" onclick=\'showSection("settings");closeEndResultDialog();\'/>\n' +
@@ -582,6 +581,7 @@ function Expand(node, graph) {
 }
 
 function showSection(section) {
+    game_sound.stop();
     window.clearInterval(interval);
     document.getElementById("form_id").reset();
     document.getElementById("registerForm").reset();
