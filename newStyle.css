@@ -177,10 +177,14 @@ body{
  #welcomeTitle{
      font-family:Trebuchet MS;
 
-     font-size: 8.2em;
+     font-size: 4.2em;
      color: #ffb32d;
      
      text-align: center;
      padding: 15px 50px 10px 0px;
 
 }
+ #loginBtn,#registerBtn{
+     width: 200px;
+     height: 70px;
+ }

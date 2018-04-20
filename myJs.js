@@ -12,14 +12,16 @@ var pacman_lives;
 var direction = DrawPacmanRight;
 var Direction = Object.freeze({UP: 1, DOWN: 2, LEFT: 3, RIGHT: 4});
 var GameItems = Object.freeze({
+    BLANK: 0,
     RED_FOOD: 1,
     PACMAN: 2,
-    BLANK: 0,
+    HEART: 3,
     OBSTACLE: 4,
     GHOST: 5,
-    YELLOW_FOOD: 7,
     ORANGE_FOOD: 6,
-    HEART: 3
+    YELLOW_FOOD: 7,
+    CLOCK: 8,
+    MOVING_SCORE: 9
 });
 var board_height = 10;
 var board_width = 15;
@@ -38,89 +40,21 @@ var loop_iterval = 150;
 function InitGhosts() {
     ghosts = [];
     ghosts.push(new Ghost(0, 0, "Gallery/monster1.png"));
-    if (ghosts_number > 1)
+    board[0][0] = GameItems.GHOST;
+    if (ghosts_number > 1) {
         ghosts.push(new Ghost(0, board_height - 1, "Gallery/monster2.png"));
-    if (ghosts_number > 2)
+        board[0][board_height - 1] = GameItems.GHOST;
+    }
+    if (ghosts_number > 2) {
         ghosts.push(new Ghost(board_width - 1, 0, "Gallery/monster3.png"));
+        board[board_width - 1][0] = GameItems.GHOST;
+    }
 }
 
-function Start() {
-    heart = {};
-    clock = {};
-    pacman_lives = 3;
-    showSection("gameBoard");
-    total_food = parseInt(document.getElementById('balls').value);
-    ghosts_number = parseInt(document.getElementById('ghosts').value);
-    time_elapsed = parseInt(document.getElementById('duration').value);
-    context = canvas.getContext("2d");
-    pacman_position = new Object();
-
-    InitGhosts();
-    movingScore = new MovingScore(5, 0, "Gallery/star.png");
-    board = new Array();
-    score = 0;
-    pac_color = "yellow";
-    var cnt = 200;
-    var food_remain = total_food;
-    remain_food = total_food;
-    var pacman_remain = 1;
-    //Init the board: put pacman, obstacles and food
-    start_time = new Date();
-
-    //put obstacles in (i=3,j=3) and (i=3,j=4) and (i=3,j=5), (i=6,j=1) and (i=6,j=2)
-
-    for (var i = 0; i < board_width; i++) {
-        board[i] = new Array();
-        for (var j = 0; j < board_height; j++) {
-            if ((i == 3 && j == 3) || (i == 3 && j == 4) || (i == 3 && j == 5) || (i == 6 && j == 1) || (i == 6 && j == 2)) {
-                board[i][j] = GameItems.OBSTACLE;
-            }
-            // put pacman and food at random places
-            else {
-                var randomNum = Math.random();
-                // if (randomNum <= 1.0 * food_remain / cnt) {
-                //     food_remain--;
-                //     board[i][j] = GameItems.RED_FOOD;
-                // if (randomNum < 1.0 * (pacman_remain + food_remain) / cnt) {
-                //     pacman_position.i = i;
-                //     pacman_position.j = j;
-                //     pacman_remain--;
-                //     board[i][j] = GameItems.PACMAN;
-                //  else {
-                    board[i][j] = GameItems.BLANK;
-                // }
-                cnt--;
-            }
-        }
-    }
-    //Put all remaining food on the board
-    var emptyCell;
-    if (pacman_remain > 0) {
-        emptyCell = findRandomEmptyCell(board);
-        pacman_position.i = emptyCell[0];
-        pacman_position.j = emptyCell[1];
-
-    }
-    emptyCell = findRandomEmptyCell(board);
-    heart = {};
-    heart.image = new Image();
-    heart.alive = true;
-    heart.image.src = "Gallery/heart.png";
-    heart.x = emptyCell[0];
-    heart.y = emptyCell[1];
-    board[heart.x][heart.y] = GameItems.HEART;
-
-    emptyCell = findRandomEmptyCell(board);
-    clock = {};
-    clock.image = new Image();
-    clock.alive = true;
-    clock.image.src = "Gallery/clock.png";
-    clock.x = emptyCell[0];
-    clock.y = emptyCell[1];
-
+function InitFood(emptyCell) {
     let red_food = Math.floor(total_food * 0.1);
-    let orange_food =  Math.floor(total_food * 0.3);
-    let yellow_food =  Math.floor(total_food * 0.6);
+    let orange_food = Math.floor(total_food * 0.3);
+    let yellow_food = Math.floor(total_food * 0.6);
 
     while (red_food > 0) {
 
@@ -142,6 +76,60 @@ function Start() {
         board[emptyCell[0]][emptyCell[1]] = GameItems.YELLOW_FOOD;
         yellow_food--;
     }
+}
+
+function Start() {
+    pacman_lives = 3;
+    showSection("gameBoard");
+    total_food = parseInt(document.getElementById('balls').value);
+    ghosts_number = parseInt(document.getElementById('ghosts').value);
+    time_elapsed = parseInt(document.getElementById('duration').value);
+    context = canvas.getContext("2d");
+    pacman_position = new Object();
+
+    board = new Array();
+    score = 0;
+    pac_color = "yellow";
+    var cnt = 200;
+    var food_remain = total_food;
+    remain_food = total_food;
+    var pacman_remain = 1;
+    //Init the board: put pacman, obstacles and food
+    start_time = new Date();
+
+    //put obstacles in (i=3,j=3) and (i=3,j=4) and (i=3,j=5), (i=6,j=1) and (i=6,j=2)
+
+    for (var i = 0; i < board_width; i++) {
+        board[i] = new Array();
+        for (var j = 0; j < board_height; j++) {
+            if ((i == 3 && j == 3) || (i == 3 && j == 4) || (i == 3 && j == 5) || (i == 6 && j == 1) || (i == 6 && j == 2)) {
+                board[i][j] = GameItems.OBSTACLE;
+            }
+            else {
+                board[i][j] = GameItems.BLANK;
+                cnt--;
+            }
+        }
+    }
+    InitGhosts();
+    movingScore = new MovingScore(5, 0, "Gallery/star.png");
+    board[movingScore.x][movingScore.y] = GameItems.MOVING_SCORE;
+    //Put all remaining food on the board
+    var emptyCell;
+    emptyCell = findRandomEmptyCell(board);
+    pacman_position.i = emptyCell[0];
+    pacman_position.j = emptyCell[1];
+
+
+    emptyCell = findRandomEmptyCell(board);
+    heart = new GameObject("Gallery/heart.png",emptyCell[0], emptyCell[1]);
+    board[heart.x][heart.y] = GameItems.HEART;
+
+    emptyCell = findRandomEmptyCell(board);
+    clock = new GameObject("Gallery/clock.png",emptyCell[0], emptyCell[1]);
+    board[clock.x][clock.y] = GameItems.CLOCK;
+
+    InitFood(emptyCell);
 
     //Init listeners to identify keyboard clicks
     keysDown = {};
@@ -295,7 +283,8 @@ function GameOver() {
 }
 
 function GhostEatsPacman() {
-    if (pacman_lives == 0) {
+    if (pacman_lives === 0) {
+        Draw();
         GameOver();
         //return;
     }
@@ -310,85 +299,89 @@ function GhostEatsPacman() {
 
 function CheckCollisions() {
     var dead = false;
-    if (movingScore.alive && board[movingScore.x][movingScore.y] == GameItems.PACMAN) { // pacman eats moving score
+    if (movingScore.alive && board[pacman_position.i][pacman_position.j] === GameItems.MOVING_SCORE) { // pacman eats moving score
         score += 50;
         movingScore.alive = false;
         movingScore.x = -1;
         movingScore.y = -1;
     }
 
-    if (heart.alive && board[heart.x][heart.y] == GameItems.PACMAN) { // pacman eats moving score
+    if (heart.alive && board[pacman_position.i][pacman_position.j] === GameItems.HEART) { // pacman eats moving score
         pacman_lives++;
         heart.alive = false;
     }
 
-    if (clock.alive && board[clock.x][clock.y] == GameItems.PACMAN) { // pacman eats moving score
+    if (clock.alive && board[pacman_position.i][pacman_position.j] === GameItems.CLOCK) { // pacman eats moving score
         time_elapsed += 10;
         clock.alive = false;
     }
-
-    $.each(ghosts, function (i, ghost) {
-        if (board[ghost.x][ghost.y] == GameItems.PACMAN) { //ghost eats pacman score
-
-            dead = true;
-        }
-    });
+    if(board[pacman_position.i][pacman_position.j] === GameItems.GHOST)
+        dead = true;
     return dead;
 }
 
-function UpdatePosition() {
-    var dead;
-    dead = CheckCollisions();
-    board[pacman_position.i][pacman_position.j] = 0;
-    var x = GetKeyPressed();
-    if (x == Direction.UP) {//Up
-        if (pacman_position.j > 0 && board[pacman_position.i][pacman_position.j - 1] != GameItems.OBSTACLE) {//Check if not obstacle or out the boarder
-            pacman_position.j--;
-            direction = DrawPacmanUp;
-        }
-    }
-    if (x == Direction.DOWN) {//Down
-        if (pacman_position.j < (board_height - 1) && board[pacman_position.i][pacman_position.j + 1] != GameItems.OBSTACLE) {
-            pacman_position.j++;
-            direction = DrawPacmanDown;
-        }
-    }
-    if (x == Direction.LEFT) {//Left
-        if (pacman_position.i > 0 && board[pacman_position.i - 1][pacman_position.j] != GameItems.OBSTACLE) {
-            pacman_position.i--;
-            direction = DrawPacmanLeft;
-        }
-    }
-    if (x == Direction.RIGHT) {//Right
-        if (pacman_position.i < (board_width - 1) && board[pacman_position.i + 1][pacman_position.j] != GameItems.OBSTACLE) {
-            pacman_position.i++;
-            direction = DrawPacmanRight;
-        }
-    }
-    if (board[pacman_position.i][pacman_position.j] == GameItems.RED_FOOD) { //pacman eat food
+function CheckPacmanEatsFood() {
+    if (board[pacman_position.i][pacman_position.j] === GameItems.RED_FOOD) { //pacman eat food
         score += 25;
         remain_food--;
     }
-    if (board[pacman_position.i][pacman_position.j] == GameItems.YELLOW_FOOD) { //pacman eat food
+    if (board[pacman_position.i][pacman_position.j] === GameItems.YELLOW_FOOD) { //pacman eat food
         score += 5;
         remain_food--;
     }
-    if (board[pacman_position.i][pacman_position.j] == GameItems.ORANGE_FOOD) { //pacman eat food
+    if (board[pacman_position.i][pacman_position.j] === GameItems.ORANGE_FOOD) { //pacman eat food
         score += 15;
         remain_food--;
     }
-    board[pacman_position.i][pacman_position.j] = GameItems.PACMAN; // put pacman
-    dead = CheckCollisions();
+}
+
+function MoveGhosts(dead) {
     if (!dead) {
         $.each(ghosts, function (i, ghost) {
             ghost.NextMove();
+
         });
     }
     else {
         GhostEatsPacman();
     }
-    movingScore.NextMove();
+}
 
+function UpdatePosition() {
+
+    board[pacman_position.i][pacman_position.j] = 0;
+    var x = GetKeyPressed();
+    if (x === Direction.UP) {//Up
+        if (pacman_position.j > 0 && board[pacman_position.i][pacman_position.j - 1] !== GameItems.OBSTACLE) {//Check if not obstacle or out the boarder
+            pacman_position.j--;
+            direction = DrawPacmanUp;
+        }
+    }
+    if (x === Direction.DOWN) {//Down
+        if (pacman_position.j < (board_height - 1) && board[pacman_position.i][pacman_position.j + 1] !== GameItems.OBSTACLE) {
+            pacman_position.j++;
+            direction = DrawPacmanDown;
+        }
+    }
+    if (x === Direction.LEFT) {//Left
+        if (pacman_position.i > 0 && board[pacman_position.i - 1][pacman_position.j] !== GameItems.OBSTACLE) {
+            pacman_position.i--;
+            direction = DrawPacmanLeft;
+        }
+    }
+    if (x === Direction.RIGHT) {//Right
+        if (pacman_position.i < (board_width - 1) && board[pacman_position.i + 1][pacman_position.j] !== GameItems.OBSTACLE) {
+            pacman_position.i++;
+            direction = DrawPacmanRight;
+        }
+    }
+    CheckPacmanEatsFood();
+    var dead;
+    dead = CheckCollisions();
+    board[pacman_position.i][pacman_position.j] = GameItems.PACMAN; // put pacman
+    MoveGhosts(dead);
+    if(movingScore.alive)
+        movingScore.NextMove();
     var currentTime = new Date();
     time_elapsed -= (currentTime - start_time) / 1000;
     start_time = currentTime;
@@ -397,11 +390,9 @@ function UpdatePosition() {
     if (score >= 20 && time_elapsed <= 10) {//Change pacman image to green if you play well
         pac_color = "green";
     }
-    if (score >= 200 || remain_food == 0) {//game ended
+    if (score >= 200 || remain_food === 0) {//game ended
         window.alert("Game completed");
         window.clearInterval(interval);
-        Draw();
-        // return;
     }
     else {
         Draw();
@@ -409,56 +400,67 @@ function UpdatePosition() {
 }
 
 function MovingScore(x, y, image) {
-    var imageObj = new Image();
-    imageObj.src = image;
-    this.image = imageObj;
-    this.x = x;
-    this.y = y;
-    this.alive = true;
+    GameObject.call(this, image, x, y);
     this.NextMove = function () {
+        board[this.x][this.y] = this.stand_on;
         var randomNum = Math.floor((Math.random() * 4) + 1);
-        if (randomNum == Direction.UP) {//Up
-            if (this.y > 0 && board[this.x][this.y - 1] != GameItems.OBSTACLE) {//Check if not obstacle or out the boarder
+        if (randomNum === Direction.UP) {//Up
+            if (this.y > 0 && board[this.x][this.y - 1] !== GameItems.OBSTACLE) {//Check if not obstacle or out the boarder
                 this.y--;
             }
         }
-        if (randomNum == Direction.DOWN) {//Down
-            if (this.y < (board_height - 1) && board[this.x][this.y + 1] != GameItems.OBSTACLE) {
+        if (randomNum === Direction.DOWN) {//Down
+            if (this.y < (board_height - 1) && board[this.x][this.y + 1] !== GameItems.OBSTACLE) {
                 this.y++;
             }
         }
-        if (randomNum == Direction.LEFT) {//Left
-            if (this.x > 0 && board[this.x - 1][this.y] != GameItems.OBSTACLE) {
+        if (randomNum === Direction.LEFT) {//Left
+            if (this.x > 0 && board[this.x - 1][this.y] !== GameItems.OBSTACLE) {
                 this.x--;
             }
         }
-        if (randomNum == Direction.RIGHT) {//Right
-            if (this.x < (board_width - 1) && board[this.x + 1][this.y] != GameItems.OBSTACLE) {
+        if (randomNum === Direction.RIGHT) {//Right
+            if (this.x < (board_width - 1) && board[this.x + 1][this.y] !== GameItems.OBSTACLE) {
                 this.x++;
             }
         }
+        this.stand_on = board[this.x][this.y];
+        board[this.x][this.y] = GameItems.MOVING_SCORE;
     }
 }
 
-function Ghost(x, y, image) {
+function GameObject(image, x, y) {
     var imageObj = new Image();
     imageObj.src = image;
     this.image = imageObj;
     this.x = x;
     this.y = y;
+    this.stand_on = GameItems.BLANK;
+    this.alive = true;
+}
+
+function Ghost(x, y, image) {
+    GameObject.call(this, image, x, y);
     this.track = new Array();
     this.moved = false;
     this.CalcTrack = function () {
         this.track = BFS(new Node(this.x, this.y));
-    }
+    };
 
     this.NextMove = function () {
         if (!this.moved) {
             this.moved = true;
             if (this.track.length > 0) {
-                var pos = this.track.pop();
+                board[this.x][this.y] = this.stand_on;
+                let pos = this.track.pop();
                 this.x = pos.x;
                 this.y = pos.y;
+                if (board[this.x][this.y] === GameItems.PACMAN) {
+
+                    GhostEatsPacman();
+                }
+                this.stand_on = board[pos.x][pos.y];
+                board[pos.x][pos.y] = GameItems.GHOST;
             }
             else {
                 this.CalcTrack();
