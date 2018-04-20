@@ -87,7 +87,7 @@ function InitFood(emptyCell) {
 
 function Start() {
     showSection("gameBoard");
-    game_sound = new sound("Gallery/feeling.mp3");
+    game_sound = new sound("Gallery/underthesea.mp3");
     game_sound.Play();
     pacman_lives = 3;
     total_food = parseInt(document.getElementById('balls').value);
@@ -302,7 +302,7 @@ function GhostEatsPacman() {
     else {
         keysDown = {};
         pacman_lives--;
-        window.alert("You Lose!!!!!!!!!!! " + pacman_lives + " life left");
+        window.alert("You Lose!\n You have " + pacman_lives + " life left");
         start_time = new Date();
         for (var i = 0; i < board_width; i++) {
             for (var j = 0; j < board_height; j++) {
@@ -425,22 +425,23 @@ function checkEndResult() {
     game_sound.Stop();
     window.clearInterval(interval);
     $('#resultWindow').html('<br/>\n' +
-    '        <input type="button" value="New Game" class="newgameBtn" style="background-color: #ffdd35" onclick=\'showSection("settings");closeEndResultDialog();\'/>\n' +
-    '        <input type="button" value ="Close" class= "closeBtn"  style="background-color: #ffdd35" onclick="closeEndResultDialog()"></inputbutton>\n' +
+    '        <input type="button" value="New Game" class="newgameBtn" style="background-color: #1a3aff" onclick=\'showSection("settings");closeEndResultDialog();\'/>\n' +
+    '        <input type="button" value ="Close" class= "closeBtn"  style="background-color: #1a3aff" onclick="closeEndResultDialog()"></inputbutton>\n' +
     '        <br/>');
     if(pacman_lives === 0){
-        $('#resultWindow').prepend('<img src="gallery/gameoverblue.jpg" alt="gameover" >');
+        $('#resultWindow').prepend('<img src="gallery/gameoverblue.jpg" alt="gameover" >'+
+            '<h3>You lost!</h3>');
         document.getElementById("resultWindow").showModal();
     }
     else if(time_elapsed <= 0)
     {// if time =0 no more time
         if(score < 150){//points less then 150
-            $('#resultWindow').prepend('<img src="gallery/bigwin.jpg" alt="gameover" >' +
+            $('#resultWindow').prepend('<img src="gallery/time.jpg" alt="gameover" >' +
                 '<h3>You can do better, final score: '+ score +'  </h3>');
             document.getElementById("resultWindow").showModal();
         }
         else{
-            $('#resultWindow').prepend('<img src="gallery/bigwin.jpg" alt="gameover" height="100px">' +
+            $('#resultWindow').prepend('<img src="gallery/time.jpg" alt="gameover">' +
                 '<h3>Well done, final score: '+ score +'  </h3>');
             document.getElementById("resultWindow").showModal();
         }
@@ -651,14 +652,14 @@ function LoginValidate() {
     var password = document.getElementById("password").value;
     if (username in users && users[username] === password) {
         currentUser = username;
-        alert("found in users");
+        alert("You logged in successfully!");
         document.getElementById("form_id").reset();
         showSection('settings');
         return false;
     }
 
     else {
-        alert("Login failed");
+        alert("Login failed\n Please try again or register");
         document.getElementById("form_id").reset();
         return false;
     }
