@@ -35,8 +35,6 @@ var currentUser;
 var loop_iterval = 150;
 var game_sound;
 
-//[type=text],input[type=password], input[type=number],input[type=email]
-
 
 function InitGhosts() {
     ghosts = [];
