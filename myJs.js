@@ -30,7 +30,7 @@ var remain_food;
 var ghosts_number;
 var heart;
 var clock;
-
+var elemet_size = 60;
 var currentUser;
 var loop_iterval = 150;
 var game_sound;
@@ -54,6 +54,10 @@ function InitFood(emptyCell) {
     let red_food = Math.floor(total_food * 0.1);
     let orange_food = Math.floor(total_food * 0.3);
     let yellow_food = Math.floor(total_food * 0.6);
+    remain_food = 0;
+    remain_food += red_food;
+    remain_food += orange_food;
+    remain_food += yellow_food;
 
     while (red_food > 0) {
 
@@ -79,31 +83,17 @@ function InitFood(emptyCell) {
 
 
 
-// function sound(src) {
-//     this.sound = document.createElement("audio");
-//     this.sound.src = src;
-//     this.sound.setAttribute("preload", "auto");
-//     this.sound.setAttribute("controls", "none");
-//     this.sound.style.display = "none";
-//     document.body.appendChild(this.sound);
-//     this.play = function(){
-//         this.sound.play();
-//     }
-//
-//     this.stop = function(){
-//         this.sound.pause();
-//     }
-// }
+
 
 function Start() {
-   // game_sound = new sound("Gallery/underthesea.mp3");
-    //game_sound.play();
-    pacman_lives = 3;
     showSection("gameBoard");
+    game_sound = new sound("Gallery/feeling.mp3");
+    game_sound.Play();
+    pacman_lives = 3;
     total_food = parseInt(document.getElementById('balls').value);
     ghosts_number = parseInt(document.getElementById('ghosts').value);
-    // time_elapsed = parseInt(document.getElementById('duration').value);
-    time_elapsed = 10;
+    time_elapsed = parseInt(document.getElementById('duration').value);
+    // time_elapsed = 10;
     context = canvas.getContext("2d");
     pacman_position = new Object();
 
@@ -111,11 +101,12 @@ function Start() {
     score = 0;
     pac_color = "yellow";
     var cnt = 200;
-    var food_remain = total_food;// why is there two variable ?
-    remain_food = total_food;
+    var food_remain = total_food;
+    // remain_food = total_food;
     var pacman_remain = 1;
     //Init the board: put pacman, obstacles and food
     start_time = new Date();
+
     //put obstacles in (i=3,j=3) and (i=3,j=4) and (i=3,j=5), (i=6,j=1) and (i=6,j=2)
 
     for (var i = 0; i < board_width; i++) {
@@ -205,7 +196,7 @@ function DrawPacmanEye(x, y) {
 
 function DrawPacman(center, startAngle, endAngle) {
     context.beginPath();
-    context.arc(center.x, center.y, 30, startAngle, endAngle); // half circle
+    context.arc(center.x, center.y, elemet_size / 2, startAngle, endAngle); // half circle
     context.lineTo(center.x, center.y);
     context.fillStyle = pac_color; //image
     context.fill();
@@ -243,13 +234,13 @@ function DrawFood(center, color) {
 
 function DrawObstacle(center) {
     context.beginPath();
-    context.rect(center.x - 30, center.y - 30, 60, 60);
+    context.rect(center.x - elemet_size / 2, center.y - elemet_size / 2, elemet_size, elemet_size);
     context.fillStyle = "grey"; //image
     context.fill();
 }
 
 function DrawGhost(ghost) {
-    context.drawImage(ghost.image, ghost.x * 60, ghost.y * 60, 60, 60);
+    context.drawImage(ghost.image, ghost.x * elemet_size, ghost.y * elemet_size, elemet_size, elemet_size);
 }
 
 //Draw the board(Array) on the canvas
@@ -259,11 +250,12 @@ function Draw() {
     lblTime.value = time_elapsed;
     lblUser.value = currentUser;
     lblLife.value = pacman_lives;
+
     for (var i = 0; i < board_width; i++) {
         for (var j = 0; j < board_height; j++) {
             var center = new Object();
-            center.x = i * 60 + 30;
-            center.y = j * 60 + 30;
+            center.x = i * elemet_size + elemet_size / 2;
+            center.y = j * elemet_size + elemet_size / 2;
             if (board[i][j] == GameItems.PACMAN) {//2 means pacman
                 direction(center);
             } else if (board[i][j] == GameItems.RED_FOOD) {//1 means food
@@ -282,13 +274,13 @@ function Draw() {
         }
     }
     if (clock.alive) {
-        context.drawImage(clock.image, clock.x * 60, clock.y * 60, 60, 60);
+        context.drawImage(clock.image, clock.x * elemet_size, clock.y * elemet_size, elemet_size, elemet_size);
     }
     if (heart.alive) {
-        context.drawImage(heart.image, heart.x * 60, heart.y * 60, 60, 60);
+        context.drawImage(heart.image, heart.x * elemet_size, heart.y * elemet_size, elemet_size, elemet_size);
     }
     if (movingScore.alive) {
-        context.drawImage(movingScore.image, movingScore.x * 60, movingScore.y * 60, 60, 60);
+        context.drawImage(movingScore.image, movingScore.x * elemet_size, movingScore.y * elemet_size, elemet_size, elemet_size);
     }
     $.each(ghosts, function (i, ghost) {
         DrawGhost(ghost);
@@ -310,19 +302,29 @@ function GhostEatsPacman() {
     else {
         keysDown = {};
         pacman_lives--;
-        window.alert("You Lose!!!\nYou have " + pacman_lives + " life left");
+        window.alert("You Lose!!!!!!!!!!! " + pacman_lives + " life left");
         start_time = new Date();
+        for (var i = 0; i < board_width; i++) {
+            for (var j = 0; j < board_height; j++) {
+                if(board[i][j] === GameItems.GHOST)
+                    board[i][j] = GameItems.BLANK;
+            }
+        }
         InitGhosts();
     }
 }
 
+function PacmanEatsMovingScore() {
+    score += 50;
+    movingScore.alive = false;
+    movingScore.x = -1;
+    movingScore.y = -1;
+}
+
 function CheckCollisions() {
     var dead = false;
-    if (movingScore.alive && board[pacman_position.i][pacman_position.j] === GameItems.MOVING_SCORE) { // pacman eats moving score
-        score += 50;
-        movingScore.alive = false;
-        movingScore.x = -1;
-        movingScore.y = -1;
+    if (movingScore.alive && pacman_position.i == movingScore.x &&  pacman_position.j == movingScore.y) { // pacman eats moving score
+        PacmanEatsMovingScore();
     }
 
     if (heart.alive && board[pacman_position.i][pacman_position.j] === GameItems.HEART) { // pacman eats moving score
@@ -334,8 +336,10 @@ function CheckCollisions() {
         time_elapsed += 10;
         clock.alive = false;
     }
-    if(board[pacman_position.i][pacman_position.j] === GameItems.GHOST)
-        dead = true;
+    $.each(ghosts, function (i, ghost) {
+        if(pacman_position.i == ghost.x &&  pacman_position.j == ghost.y)
+            dead = true;
+    });
     return dead;
 }
 
@@ -409,7 +413,7 @@ function UpdatePosition() {
     if (score >= 20 && time_elapsed <= 10) {//Change pacman image to green if you play well
         pac_color = "green";
     }
-    if (score >= 200 || remain_food === 0) {//game ended
+    if (remain_food === 0) {//game ended
         checkEndResult()
     }
     else {
@@ -418,10 +422,11 @@ function UpdatePosition() {
 }
 
 function checkEndResult() {
+    game_sound.Stop();
     window.clearInterval(interval);
     $('#resultWindow').html('<br/>\n' +
-    '        <input type="button" value="New Game" class="newgameBtn" style="background-color: #1a3aff" onclick=\'showSection("settings");closeEndResultDialog();\'/>\n' +
-    '        <input type="button" value ="Close" class= "closeBtn"  style="background-color: #1a3aff" onclick="closeEndResultDialog()"></inputbutton>\n' +
+    '        <input type="button" value="New Game" class="newgameBtn" style="background-color: #ffdd35" onclick=\'showSection("settings");closeEndResultDialog();\'/>\n' +
+    '        <input type="button" value ="Close" class= "closeBtn"  style="background-color: #ffdd35" onclick="closeEndResultDialog()"></inputbutton>\n' +
     '        <br/>');
     if(pacman_lives === 0){
         $('#resultWindow').prepend('<img src="gallery/gameoverblue.jpg" alt="gameover" >');
@@ -430,18 +435,18 @@ function checkEndResult() {
     else if(time_elapsed <= 0)
     {// if time =0 no more time
         if(score < 150){//points less then 150
-            $('#resultWindow').prepend('<img src="gallery/time.jpg" alt="time is up" >' +
+            $('#resultWindow').prepend('<img src="gallery/bigwin.jpg" alt="gameover" >' +
                 '<h3>You can do better, final score: '+ score +'  </h3>');
             document.getElementById("resultWindow").showModal();
         }
         else{
-            $('#resultWindow').prepend('<img src="gallery/time.jpg" alt="time is up" >' +
+            $('#resultWindow').prepend('<img src="gallery/bigwin.jpg" alt="gameover" height="100px">' +
                 '<h3>Well done, final score: '+ score +'  </h3>');
             document.getElementById("resultWindow").showModal();
         }
     }
     else{//if ate all of the balls
-        $('#resultWindow').prepend('<img src="gallery/bigwin.jpg" alt="big win" >' +
+        $('#resultWindow').prepend('<img src="gallery/bigwin.jpg" alt="gameover" >' +
             '<h3>We Have A Winner!!!</h3>');
         document.getElementById("resultWindow").showModal();
     }
@@ -451,7 +456,7 @@ function checkEndResult() {
 function MovingScore(x, y, image) {
     GameObject.call(this, image, x, y);
     this.NextMove = function () {
-        board[this.x][this.y] = this.stand_on;
+        // board[this.x][this.y] = this.stand_on;
         var randomNum = Math.floor((Math.random() * 4) + 1);
         if (randomNum === Direction.UP) {//Up
             if (this.y > 0 && board[this.x][this.y - 1] !== GameItems.OBSTACLE) {//Check if not obstacle or out the boarder
@@ -473,8 +478,11 @@ function MovingScore(x, y, image) {
                 this.x++;
             }
         }
-        this.stand_on = board[this.x][this.y];
-        board[this.x][this.y] = GameItems.MOVING_SCORE;
+        // this.stand_on = board[this.x][this.y];
+        if (board[this.x][this.y] === GameItems.PACMAN) {
+            PacmanEatsMovingScore();
+        }
+        // board[this.x][this.y] = GameItems.MOVING_SCORE;
     }
 }
 
@@ -500,16 +508,18 @@ function Ghost(x, y, image) {
         if (!this.moved) {
             this.moved = true;
             if (this.track.length > 0) {
-                board[this.x][this.y] = this.stand_on;
+                // board[this.x][this.y] = this.stand_on;
                 let pos = this.track.pop();
                 this.x = pos.x;
                 this.y = pos.y;
                 if (board[this.x][this.y] === GameItems.PACMAN) {
-
                     GhostEatsPacman();
                 }
-                this.stand_on = board[pos.x][pos.y];
-                board[pos.x][pos.y] = GameItems.GHOST;
+                // if(board[pos.x][pos.y] === GameItems.GHOST)
+                    // this.stand_on = board[pos.x][pos.y];
+                // else
+                    // this.stand_on = GameItems.BLANK;
+                // board[pos.x][pos.y] = GameItems.GHOST;
             }
             else {
                 this.CalcTrack();
@@ -519,6 +529,10 @@ function Ghost(x, y, image) {
         else {
             this.moved = false;
         }
+    };
+
+    this.Delete = function () {
+        board[this.x][this.y] = GameItems.BLANK;
     }
 }
 
@@ -578,7 +592,8 @@ function Expand(node, graph) {
 }
 
 function showSection(section) {
-    //game_sound.stop();
+    if(game_sound !== undefined)
+        game_sound.Stop();
     window.clearInterval(interval);
     document.getElementById("form_id").reset();
     document.getElementById("registerForm").reset();
@@ -636,14 +651,14 @@ function LoginValidate() {
     var password = document.getElementById("password").value;
     if (username in users && users[username] === password) {
         currentUser = username;
-        alert("Logged in successfully!");
+        alert("found in users");
         document.getElementById("form_id").reset();
         showSection('settings');
         return false;
     }
 
     else {
-        alert("Login failed, try again or register");
+        alert("Login failed");
         document.getElementById("form_id").reset();
         return false;
     }
@@ -746,3 +761,19 @@ function checkSettings(){
     return false;
 }
 
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.Play = function(){
+        this.sound.play();
+    };
+
+    this.Stop = function(){
+        if(!this.sound.paused)
+            this.sound.pause();
+    }
+}
