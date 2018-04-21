@@ -34,55 +34,8 @@ var elemet_size = 60;
 var currentUser;
 var loop_iterval = 150;
 var game_sound;
-
-
-function InitGhosts() {
-    ghosts = [];
-    ghosts.push(new Ghost(0, 0, "Gallery/monster1.png"));
-    board[0][0] = GameItems.GHOST;
-    if (ghosts_number > 1) {
-        ghosts.push(new Ghost(0, board_height - 1, "Gallery/monster2.png"));
-        board[0][board_height - 1] = GameItems.GHOST;
-    }
-    if (ghosts_number > 2) {
-        ghosts.push(new Ghost(board_width - 1, 0, "Gallery/monster3.png"));
-        board[board_width - 1][0] = GameItems.GHOST;
-    }
-}
-
-function InitFood(emptyCell) {
-    let red_food = Math.floor(total_food * 0.1);
-    let orange_food = Math.floor(total_food * 0.3);
-    let yellow_food = Math.floor(total_food * 0.6);
-    remain_food = 0;
-    remain_food += red_food;
-    remain_food += orange_food;
-    remain_food += yellow_food;
-
-    while (red_food > 0) {
-
-        emptyCell = findRandomEmptyCell(board);
-        board[emptyCell[0]][emptyCell[1]] = GameItems.RED_FOOD;
-        red_food--;
-    }
-
-    while (orange_food > 0) {
-
-        emptyCell = findRandomEmptyCell(board);
-        board[emptyCell[0]][emptyCell[1]] = GameItems.ORANGE_FOOD;
-        orange_food--;
-    }
-
-    while (yellow_food > 0) {
-
-        emptyCell = findRandomEmptyCell(board);
-        board[emptyCell[0]][emptyCell[1]] = GameItems.YELLOW_FOOD;
-        yellow_food--;
-    }
-}
-
-
-
+var users = {};
+users['a'] = 'a';
 
 
 function Start() {
@@ -93,7 +46,6 @@ function Start() {
     total_food = parseInt(document.getElementById('balls').value);
     ghosts_number = parseInt(document.getElementById('ghosts').value);
     time_elapsed = parseInt(document.getElementById('duration').value);
-    // time_elapsed = 10;
     context = canvas.getContext("2d");
     pacman_position = new Object();
 
@@ -101,9 +53,6 @@ function Start() {
     score = 0;
     pac_color = "yellow";
     var cnt = 200;
-    var food_remain = total_food;
-    // remain_food = total_food;
-    var pacman_remain = 1;
     //Init the board: put pacman, obstacles and food
     start_time = new Date();
 
@@ -144,6 +93,60 @@ function Start() {
     InitFood(emptyCell);
 
     //Init listeners to identify keyboard clicks
+    InitKeyLiseners();
+    //Update pacman position on the board every 250ms
+    $(document).ready(function () {
+        interval = setInterval(UpdatePosition, loop_iterval);
+    });
+}
+
+function InitGhosts() {
+    ghosts = [];
+    ghosts.push(new Ghost(0, 0, "Gallery/monster1.png"));
+    board[0][0] = GameItems.GHOST;
+    if (ghosts_number > 1) {
+        ghosts.push(new Ghost(0, board_height - 1, "Gallery/monster2.png"));
+        board[0][board_height - 1] = GameItems.GHOST;
+    }
+    if (ghosts_number > 2) {
+        ghosts.push(new Ghost(board_width - 1, 0, "Gallery/monster3.png"));
+        board[board_width - 1][0] = GameItems.GHOST;
+    }
+}
+
+
+function InitFood(emptyCell) {
+    let red_food = Math.floor(total_food * 0.1);
+    let orange_food = Math.floor(total_food * 0.3);
+    let yellow_food = Math.floor(total_food * 0.6);
+    remain_food = 0;
+    remain_food += red_food;
+    remain_food += orange_food;
+    remain_food += yellow_food;
+
+    while (red_food > 0) {
+
+        emptyCell = findRandomEmptyCell(board);
+        board[emptyCell[0]][emptyCell[1]] = GameItems.RED_FOOD;
+        red_food--;
+    }
+
+    while (orange_food > 0) {
+
+        emptyCell = findRandomEmptyCell(board);
+        board[emptyCell[0]][emptyCell[1]] = GameItems.ORANGE_FOOD;
+        orange_food--;
+    }
+
+    while (yellow_food > 0) {
+
+        emptyCell = findRandomEmptyCell(board);
+        board[emptyCell[0]][emptyCell[1]] = GameItems.YELLOW_FOOD;
+        yellow_food--;
+    }
+}
+
+function InitKeyLiseners() {
     keysDown = {};
     addEventListener("keydown", function (e) {
         keysDown[e.keyCode] = true;
@@ -151,10 +154,6 @@ function Start() {
     addEventListener("keyup", function (e) {
         keysDown[e.keyCode] = false;
     }, false);
-    //Update pacman position on the board every 250ms
-    $(document).ready(function () {
-        interval = setInterval(UpdatePosition, loop_iterval);
-    });
 }
 
 //Find random empty cell on 10x10 board  (the 9 need to be variable)
@@ -227,7 +226,6 @@ function DrawFood(center, color) {
     context.beginPath();
     context.arc(center.x, center.y, 15, 0, 2 * Math.PI); // circle
     context.fillStyle = color; //image
-    //context.fillText("10",10,90);
     context.fill();
 
 }
@@ -297,11 +295,11 @@ function GhostEatsPacman() {
     if (pacman_lives === 0) {
         Draw();
         GameOver();
-        //return;
     }
     else {
         keysDown = {};
         pacman_lives--;
+        Draw();
         window.alert("You Lose!\n You have " + pacman_lives + " life left");
         start_time = new Date();
         for (var i = 0; i < board_width; i++) {
@@ -311,6 +309,7 @@ function GhostEatsPacman() {
             }
         }
         InitGhosts();
+        InitKeyLiseners();
     }
 }
 
@@ -479,11 +478,9 @@ function MovingScore(x, y, image) {
                 this.x++;
             }
         }
-        // this.stand_on = board[this.x][this.y];
         if (board[this.x][this.y] === GameItems.PACMAN) {
             PacmanEatsMovingScore();
         }
-        // board[this.x][this.y] = GameItems.MOVING_SCORE;
     }
 }
 
@@ -509,18 +506,12 @@ function Ghost(x, y, image) {
         if (!this.moved) {
             this.moved = true;
             if (this.track.length > 0) {
-                // board[this.x][this.y] = this.stand_on;
                 let pos = this.track.pop();
                 this.x = pos.x;
                 this.y = pos.y;
                 if (board[this.x][this.y] === GameItems.PACMAN) {
                     GhostEatsPacman();
                 }
-                // if(board[pos.x][pos.y] === GameItems.GHOST)
-                    // this.stand_on = board[pos.x][pos.y];
-                // else
-                    // this.stand_on = GameItems.BLANK;
-                // board[pos.x][pos.y] = GameItems.GHOST;
             }
             else {
                 this.CalcTrack();
@@ -565,7 +556,7 @@ function BFS(Start) {
         });
         graph[node.x][node.y] = -1;
     }
-    return new Array();
+    return [];
 }
 
 function Expand(node, graph) {
@@ -629,8 +620,7 @@ function closeEndResultDialog() {
     document.getElementById("resultWindow").close();
 }
 
-var users = {};
-users['a'] = 'a';
+
 
 function submit() {
     var username = document.getElementById("usernameR").value;
