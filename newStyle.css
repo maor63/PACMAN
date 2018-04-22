@@ -140,7 +140,7 @@ input[type=reset]:hover {
 footer
 {
     font-weight: bold;
-    position: fixed;
+    position: absolute;
     height: 40px;
     font-family: sans-serif;
     text-color : green;
