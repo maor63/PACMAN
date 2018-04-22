@@ -169,11 +169,9 @@ function InitKeyLiseners() {
     keysDown = {};
     addEventListener("keydown", function (e) {
         keysDown[e.keyCode] = true;
-        e.preventDefault();
     }, false);
     addEventListener("keyup", function (e) {
         keysDown[e.keyCode] = false;
-        e.preventDefault();
     }, false);
 }
 
