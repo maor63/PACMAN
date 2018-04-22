@@ -513,7 +513,6 @@ function checkEndResult() {
 function MovingScore(x, y, image) {
     GameObject.call(this, image, x, y);
     this.NextMove = function () {
-        // board[this.x][this.y] = this.stand_on;
         var randomNum = Math.floor((Math.random() * 4) + 1);
         if (randomNum === Direction.UP) {//Up
             if (this.y > 0 && board[this.x][this.y - 1] !== GameItems.OBSTACLE) {//Check if not obstacle or out the boarder
@@ -677,8 +676,6 @@ function closeEndResultDialog() {
     document.getElementById("resultWindow").close();
 }
 
-
-
 function submit() {
     var username = document.getElementById("usernameR").value;
     var password = document.getElementById("passwordR").value;
@@ -690,8 +687,6 @@ function submit() {
 function Register() {
     showSection("register");
     validate_register();
-    //submit();
-    //showSection("welcome");
 }
 
 function LoginValidate() {
