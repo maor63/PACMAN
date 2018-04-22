@@ -123,8 +123,7 @@ function InitGhosts() {
     ghosts.push(new Ghost(0, 0, "Gallery/monster1.png"));
     board[0][0] = GameItems.GHOST;
     if (ghosts_number > 1) {
-        // ghosts.push(new Ghost(0, board_height - 1, "Gallery/monster2.png"));
-        ghosts.push(new Ghost(0, 0, "Gallery/monster2.png"));
+        ghosts.push(new Ghost(0, board_height - 1, "Gallery/monster2.png"));
         board[0][board_height - 1] = GameItems.GHOST;
     }
     if (ghosts_number > 2) {
@@ -343,7 +342,7 @@ function GhostEatsPacman() {
         start_time = new Date();
         for (var i = 0; i < board_width; i++) {
             for (var j = 0; j < board_height; j++) {
-                if(board[i][j] === GameItems.GHOST)
+                if (board[i][j] === GameItems.GHOST)
                     board[i][j] = GameItems.BLANK;
             }
         }
@@ -417,10 +416,15 @@ function CheckPacmanEatsFood() {
 
 function MoveGhosts(dead) {
     if (!dead) {
+        let pacman_dead = false;
         $.each(ghosts, function (i, ghost) {
             ghost.NextMove();
-
+            if (board[ghost.x][ghost.y] === GameItems.PACMAN) {
+                pacman_dead = true;
+            }
         });
+        if (pacman_dead)
+            GhostEatsPacman();
     }
     else {
         GhostEatsPacman();
@@ -460,7 +464,7 @@ function UpdatePosition() {
     pacman_dead = CheckCollisions();
     board[pacman_position.i][pacman_position.j] = GameItems.PACMAN; // put pacman
     MoveGhosts(pacman_dead);
-    if(movingScore.alive)
+    if (movingScore.alive)
         movingScore.NextMove();
     var currentTime = new Date();
     time_elapsed -= (currentTime - start_time) / 1000;
@@ -482,28 +486,27 @@ function checkEndResult() {
     game_sound.Stop();
     window.clearInterval(interval);
     $('#resultWindow').html('<br/>\n' +
-    '        <input type="button" value="New Game" class="newgameBtn" style="background-color: #1a3aff" onclick=\'showSection("settings");closeEndResultDialog();\'/>\n' +
-    '        <input type="button" value ="Close" class= "closeBtn"  style="background-color: #1a3aff" onclick="closeEndResultDialog()"></inputbutton>\n' +
-    '        <br/>');
-    if(pacman_lives === 0){
-        $('#resultWindow').prepend('<img src="gallery/gameoverblue.jpg" alt="gameover" >'+
+        '        <input type="button" value="New Game" class="newgameBtn" style="background-color: #1a3aff" onclick=\'showSection("settings");closeEndResultDialog();\'/>\n' +
+        '        <input type="button" value ="Close" class= "closeBtn"  style="background-color: #1a3aff" onclick="closeEndResultDialog()"></inputbutton>\n' +
+        '        <br/>');
+    if (pacman_lives === 0) {
+        $('#resultWindow').prepend('<img src="gallery/gameoverblue.jpg" alt="gameover" >' +
             '<h3>You lost!</h3>');
         document.getElementById("resultWindow").showModal();
     }
-    else if(time_elapsed <= 0)
-    {// if time =0 no more time
-        if(score < 150){//points less then 150
+    else if (time_elapsed <= 0) {// if time =0 no more time
+        if (score < 150) {//points less then 150
             $('#resultWindow').prepend('<img src="gallery/time.jpg" alt="gameover" >' +
-                '<h3>You can do better, final score: '+ score +'  </h3>');
+                '<h3>You can do better, final score: ' + score + '  </h3>');
             document.getElementById("resultWindow").showModal();
         }
-        else{
+        else {
             $('#resultWindow').prepend('<img src="gallery/time.jpg" alt="gameover">' +
-                '<h3>Well done, final score: '+ score +'  </h3>');
+                '<h3>Well done, final score: ' + score + '  </h3>');
             document.getElementById("resultWindow").showModal();
         }
     }
-    else{//if ate all of the balls
+    else {//if ate all of the balls
         $('#resultWindow').prepend('<img src="gallery/bigwin.jpg" alt="gameover" >' +
             '<h3>We Have A Winner!!!</h3>');
         document.getElementById("resultWindow").showModal();
@@ -566,9 +569,9 @@ function Ghost(x, y, image) {
                 let pos = this.track.pop();
                 this.x = pos.x;
                 this.y = pos.y;
-                if (board[this.x][this.y] === GameItems.PACMAN) {
-                    GhostEatsPacman();
-                }
+                // if (board[this.x][this.y] === GameItems.PACMAN) {
+                //     GhostEatsPacman();
+                // }
             }
             else {
                 this.CalcTrack();
@@ -641,7 +644,7 @@ function Expand(node, graph) {
 }
 
 function showSection(section) {
-    if(game_sound !== undefined)
+    if (game_sound !== undefined)
         game_sound.Stop();
     window.clearInterval(interval);
     document.getElementById("form_id").reset();
@@ -670,7 +673,8 @@ function showAboutDialog() {
 function closeAboutDialog() {
     document.getElementById("aboutWindow").close();
     start_time = new Date();
-    interval = setInterval(UpdatePosition, loop_iterval);
+    if (time_elapsed > 0 && remain_food > 0 && pacman_lives > 0)
+        interval = setInterval(UpdatePosition, loop_iterval);
 }
 
 function closeEndResultDialog() {
@@ -714,14 +718,14 @@ $(document).ready(function () {
 
 function validate_register() {
     showSection("register");
-     $.validator.addMethod("pwcheck", function (value) {
-         return /^[A-Za-z0-9\d=!\-@._*]*$/.test(value) // consists of only these
-             && /[a-z]/.test(value) // has a lowercase letter
-             && /\d/.test(value) // has a digit
-     });
-     $(function () {
-    //     // Initialize form validation on the registration form.
-    //     // It has the name attribute "registration"
+    $.validator.addMethod("pwcheck", function (value) {
+        return /^[A-Za-z0-9\d=!\-@._*]*$/.test(value) // consists of only these
+            && /[a-z]/.test(value) // has a lowercase letter
+            && /\d/.test(value) // has a digit
+    });
+    $(function () {
+        //     // Initialize form validation on the registration form.
+        //     // It has the name attribute "registration"
         $("#registerForm").validate({
             // Specify validation rules
             rules: {
@@ -773,29 +777,26 @@ function validate_register() {
             },
             // Make sure the form is submitted to the destination defined
             // in the "action" attribute of the form when valid
-             submitHandler: function (form) {
-                 form.submit();
-             }
+            submitHandler: function (form) {
+                form.submit();
+            }
         });
-     });
+    });
 }
 
-function checkSettings(){
-    var cballs=parseInt(document.getElementById('balls').value);
-    var cghots=parseInt(document.getElementById('ghosts').value);
-    var dur=parseInt(document.getElementById('duration').value);
-    if(cballs<50 || cballs>90){
+function checkSettings() {
+    var cballs = parseInt(document.getElementById('balls').value);
+    var cghots = parseInt(document.getElementById('ghosts').value);
+    var dur = parseInt(document.getElementById('duration').value);
+    if (cballs < 50 || cballs > 90) {
         window.alert("Number of balls have to be between 50 to 90")
     }
-    else{
-        if(cghots<1||cghots>3)
-        {
+    else {
+        if (cghots < 1 || cghots > 3) {
             window.alert("Number of ghosts have to be between 1 to 3")
         }
-        else
-        {
-            if(dur<60)
-            {
+        else {
+            if (dur < 60) {
                 window.alert("The duration of the game has to be over 60 sec")
             }
             else
@@ -813,12 +814,12 @@ function sound(src) {
     this.sound.setAttribute("controls", "none");
     this.sound.style.display = "none";
     document.body.appendChild(this.sound);
-    this.Play = function(){
+    this.Play = function () {
         this.sound.play();
     };
 
-    this.Stop = function(){
-        if(!this.sound.paused)
+    this.Stop = function () {
+        if (!this.sound.paused)
             this.sound.pause();
     }
 }
