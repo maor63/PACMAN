@@ -52,26 +52,19 @@ function Start() {
     board = new Array();
     score = 0;
     pac_color = "yellow";
-    var cnt = 200;
     //Init the board: put pacman, obstacles and food
     start_time = new Date();
 
     //put obstacles in (i=3,j=3) and (i=3,j=4) and (i=3,j=5), (i=6,j=1) and (i=6,j=2)
-    walls = [[8,9],[8,10], [8,11], [8,12],[5,8],[5,9],[5,10],[6,10],[7,10]];
+    walls = [[3,3],[3,4],[3,5],[6,1],[6,2],[8,8],[9,8], [10,8],[10,5],[10,6],[10,7]];
     for (var i = 0; i < board_width; i++) {
         board[i] = new Array();
         for (var j = 0; j < board_height; j++) {
-            if ((i == 3 && j == 3) || (i == 3 && j == 4) || (i == 3 && j == 5) || (i == 6 && j == 1) || (i == 6 && j == 2)) {
-                board[i][j] = GameItems.OBSTACLE;
-            }
-            else {
                 board[i][j] = GameItems.BLANK;
-                cnt--;
-            }
         }
     }
     $.each(walls, function (i, wall) {
-       board[wall[1]][wall[0]] = GameItems.OBSTACLE;
+       board[wall[0]][wall[1]] = GameItems.OBSTACLE;
     });
     InitGhosts();
     InitMovingScore();
@@ -273,7 +266,7 @@ function DrawFood(center, color) {
 function DrawObstacle(center) {
     context.beginPath();
     context.rect(center.x - elemet_size / 2, center.y - elemet_size / 2, elemet_size, elemet_size);
-    context.fillStyle = "grey"; //image
+    context.fillStyle = "#99cc33"; //image
     context.fill();
 }
 
