@@ -2,6 +2,7 @@ canvas{
     border: 10px;
     background: #cdcdcd;
     margin: auto;
+    /*position: fixed;*/
 }
 body{
     font-family: sans-serif;
@@ -55,8 +56,7 @@ h1{
 }
 section
 {
-
-    position: fixed;
+    position: absolute;
     top:100px;
     left: 150px;
     width: 500px;

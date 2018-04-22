@@ -28,8 +28,8 @@ var board_width = 15;
 var total_food;
 var remain_food;
 var ghosts_number;
-var heart;
-var clock;
+var hearts;
+var clocks;
 var elemet_size = 60;
 var currentUser;
 var loop_iterval = 150;
@@ -71,33 +71,51 @@ function Start() {
         }
     }
     InitGhosts();
-    var emptyCell;
-    emptyCell = findRandomEmptyCell(board);
-    movingScore = new MovingScore(emptyCell[0], emptyCell[1], "Gallery/star.png");
-    board[movingScore.x][movingScore.y] = GameItems.MOVING_SCORE;
-    //Put all remaining food on the board
-
-    emptyCell = findRandomEmptyCell(board);
-    pacman_position.i = emptyCell[0];
-    pacman_position.j = emptyCell[1];
-    board[pacman_position.i][pacman_position.j] = GameItems.PACMAN;
-
-    emptyCell = findRandomEmptyCell(board);
-    heart = new GameObject("Gallery/heart.png",emptyCell[0], emptyCell[1]);
-    board[heart.x][heart.y] = GameItems.HEART;
-
-    emptyCell = findRandomEmptyCell(board);
-    clock = new GameObject("Gallery/clock.png",emptyCell[0], emptyCell[1]);
-    board[clock.x][clock.y] = GameItems.CLOCK;
-
-    InitFood(emptyCell);
-
+    InitMovingScore();
+    InitPacman();
+    InitHearts(2);
+    InitClocks(2);
+    InitFood();
     //Init listeners to identify keyboard clicks
     InitKeyLiseners();
     //Update pacman position on the board every 250ms
     $(document).ready(function () {
         interval = setInterval(UpdatePosition, loop_iterval);
     });
+}
+
+function InitClocks(total_clocks) {
+    clocks = [];
+    var emptyCell;
+    for (let i = 0; i < total_clocks; i++) {
+        emptyCell = findRandomEmptyCell(board);
+        clocks.push(new GameObject("Gallery/clock.png", emptyCell[0], emptyCell[1]));
+        board[emptyCell[0]][emptyCell[1]] = GameItems.CLOCK;
+    }
+}
+
+function InitMovingScore() {
+    var emptyCell;
+    emptyCell = findRandomEmptyCell(board);
+    movingScore = new MovingScore(emptyCell[0], emptyCell[1], "Gallery/star.png");
+    board[movingScore.x][movingScore.y] = GameItems.MOVING_SCORE;
+}
+
+function InitHearts(total_hearts) {
+    hearts = [];
+    var emptyCell;
+    for (let i = 0; i < total_hearts; i++) {
+        emptyCell = findRandomEmptyCell(board);
+        hearts.push(new GameObject("Gallery/heart.png", emptyCell[0], emptyCell[1]));
+        board[emptyCell[0]][emptyCell[1]] = GameItems.HEART;
+    }
+}
+
+function InitPacman() {
+    var emptyCell = findRandomEmptyCell(board);
+    pacman_position.i = emptyCell[0];
+    pacman_position.j = emptyCell[1];
+    board[pacman_position.i][pacman_position.j] = GameItems.PACMAN;
 }
 
 function InitGhosts() {
@@ -115,7 +133,8 @@ function InitGhosts() {
 }
 
 
-function InitFood(emptyCell) {
+function InitFood() {
+    var emptyCell;
     let red_food = Math.floor(total_food * 0.1);
     let orange_food = Math.floor(total_food * 0.3);
     let yellow_food = Math.floor(total_food * 0.6);
@@ -150,9 +169,11 @@ function InitKeyLiseners() {
     keysDown = {};
     addEventListener("keydown", function (e) {
         keysDown[e.keyCode] = true;
+        e.preventDefault();
     }, false);
     addEventListener("keyup", function (e) {
         keysDown[e.keyCode] = false;
+        e.preventDefault();
     }, false);
 }
 
@@ -184,6 +205,20 @@ function GetKeyPressed() {
     if (keysDown[39]) {
         return Direction.RIGHT;
     }
+}
+
+//Draw the board(Array) on the canvas
+function Draw() {
+    canvas.width = canvas.width; //clean board
+    lblScore.value = score; //lbl = label
+    lblTime.value = time_elapsed;
+    lblUser.value = currentUser;
+    lblLife.value = pacman_lives;
+    DrawAllFood();
+    DrawClocks();
+    DrawHearts();
+    DrawMovingScore();
+    DrawGhosts();
 }
 
 function DrawPacmanEye(x, y) {
@@ -241,14 +276,35 @@ function DrawGhost(ghost) {
     context.drawImage(ghost.image, ghost.x * elemet_size, ghost.y * elemet_size, elemet_size, elemet_size);
 }
 
-//Draw the board(Array) on the canvas
-function Draw() {
-    canvas.width = canvas.width; //clean board
-    lblScore.value = score; //lbl = label
-    lblTime.value = time_elapsed;
-    lblUser.value = currentUser;
-    lblLife.value = pacman_lives;
+function DrawClocks() {
+    $.each(clocks, function (i, clock) {
+        if (clock.alive) {
+            context.drawImage(clock.image, clock.x * elemet_size, clock.y * elemet_size, elemet_size, elemet_size);
+        }
+    });
+}
 
+function DrawHearts() {
+    $.each(hearts, function (i, heart) {
+        if (heart.alive) {
+            context.drawImage(heart.image, heart.x * elemet_size, heart.y * elemet_size, elemet_size, elemet_size);
+        }
+    });
+}
+
+function DrawMovingScore() {
+    if (movingScore.alive) {
+        context.drawImage(movingScore.image, movingScore.x * elemet_size, movingScore.y * elemet_size, elemet_size, elemet_size);
+    }
+}
+
+function DrawGhosts() {
+    $.each(ghosts, function (i, ghost) {
+        DrawGhost(ghost);
+    });
+}
+
+function DrawAllFood() {
     for (var i = 0; i < board_width; i++) {
         for (var j = 0; j < board_height; j++) {
             var center = new Object();
@@ -271,30 +327,12 @@ function Draw() {
 
         }
     }
-    if (clock.alive) {
-        context.drawImage(clock.image, clock.x * elemet_size, clock.y * elemet_size, elemet_size, elemet_size);
-    }
-    if (heart.alive) {
-        context.drawImage(heart.image, heart.x * elemet_size, heart.y * elemet_size, elemet_size, elemet_size);
-    }
-    if (movingScore.alive) {
-        context.drawImage(movingScore.image, movingScore.x * elemet_size, movingScore.y * elemet_size, elemet_size, elemet_size);
-    }
-    $.each(ghosts, function (i, ghost) {
-        DrawGhost(ghost);
-    });
-
-
-}
-
-function GameOver() {
-    checkEndResult()
 }
 
 function GhostEatsPacman() {
     if (pacman_lives === 0) {
         Draw();
-        GameOver();
+        checkEndResult();
     }
     else {
         keysDown = {};
@@ -322,21 +360,40 @@ function PacmanEatsMovingScore() {
 
 function CheckCollisions() {
     var dead = false;
-    if (movingScore.alive && pacman_position.i == movingScore.x &&  pacman_position.j == movingScore.y) { // pacman eats moving score
+    CheckMovingScoreCollision();
+    CheckHeartsCollision();
+    CheckClocksCollision();
+    dead = CheckGhostsCollitions(dead);
+    return dead;
+}
+
+function CheckMovingScoreCollision() {
+    if (movingScore.alive && pacman_position.i == movingScore.x && pacman_position.j == movingScore.y) {
         PacmanEatsMovingScore();
     }
+}
 
-    if (heart.alive && board[pacman_position.i][pacman_position.j] === GameItems.HEART) { // pacman eats moving score
-        pacman_lives++;
-        heart.alive = false;
-    }
+function CheckHeartsCollision() {
+    $.each(hearts, function (i, heart) {
+        if (heart.alive && pacman_position.i == heart.x && pacman_position.j == heart.y) {
+            pacman_lives++;
+            heart.alive = false;
+        }
+    });
+}
 
-    if (clock.alive && board[pacman_position.i][pacman_position.j] === GameItems.CLOCK) { // pacman eats moving score
-        time_elapsed += 10;
-        clock.alive = false;
-    }
+function CheckClocksCollision() {
+    $.each(clocks, function (i, clock) {
+        if (clock.alive && pacman_position.i == clock.x && pacman_position.j == clock.y) {
+            time_elapsed += 10;
+            clock.alive = false;
+        }
+    });
+}
+
+function CheckGhostsCollitions(dead) {
     $.each(ghosts, function (i, ghost) {
-        if(pacman_position.i == ghost.x &&  pacman_position.j == ghost.y)
+        if (pacman_position.i == ghost.x && pacman_position.j == ghost.y)
             dead = true;
     });
     return dead;
@@ -398,17 +455,17 @@ function UpdatePosition() {
         }
     }
     CheckPacmanEatsFood();
-    var dead;
-    dead = CheckCollisions();
+    var pacman_dead;
+    pacman_dead = CheckCollisions();
     board[pacman_position.i][pacman_position.j] = GameItems.PACMAN; // put pacman
-    MoveGhosts(dead);
+    MoveGhosts(pacman_dead);
     if(movingScore.alive)
         movingScore.NextMove();
     var currentTime = new Date();
     time_elapsed -= (currentTime - start_time) / 1000;
     start_time = currentTime;
     if (time_elapsed <= 0)
-        GameOver();
+        checkEndResult();
     if (score >= 20 && time_elapsed <= 10) {//Change pacman image to green if you play well
         pac_color = "green";
     }
