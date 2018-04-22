@@ -170,12 +170,12 @@ function InitKeyLiseners() {
     addEventListener("keydown", function (e) {
         keysDown[e.keyCode] = true;
         if(e.keyCode == 38 || e.keyCode == 40)
-            e.preventDefault()
+            e.preventDefault();
     }, false);
     addEventListener("keyup", function (e) {
         keysDown[e.keyCode] = false;
         if(e.keyCode == 38 || e.keyCode == 40)
-            e.preventDefault()
+            e.preventDefault();
     }, false);
 }
 
