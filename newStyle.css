@@ -1,6 +1,6 @@
 #nav_bar ul {
     top: 100px;
-    position: absolute;
+    position: fixed;
     width: 100%;
     left: 0;
     list-style-type: none;
@@ -28,7 +28,7 @@
 header ul {
     left: 0;
     top: 0;
-    position: absolute;
+    position: fixed;
     width: 100%;
     list-style-type: none;
     margin: 0;
@@ -62,7 +62,7 @@ h1{
 }
 section
 {
-    position: absolute;
+    position: fixed;
     top:120px;
     display: block;
     margin-left: 30%;
@@ -187,11 +187,11 @@ body{
     -o-background-size: cover;
     background-size: 100% 100%;
 }
- #welcomeTitle{
-     font-family:Trebuchet MS;
-     font-size: 4.2em;
-     color: #ffb32d;
-     text-align: center;
+#welcomeTitle{
+    font-family:Trebuchet MS;
+    font-size: 4.2em;
+    color: #ffb32d;
+    text-align: center;
 }
 #imgWelcome{
     margin: auto;
@@ -199,20 +199,20 @@ body{
 .boxes{
     align-items: center;
 }
- #loginBtn,#registerBtn{
-     width: 200px;
-     height: 70px;
-     font-size : 20px;
-     font-weight: bold;
- }
- .newgameBtn, .closeBtn{
-     width: 200px;
-     height: 70px;
-     background-color: #1a3aff;
-     font-weight: bold;
-     font-size : 17px;
+#loginBtn,#registerBtn{
+    width: 200px;
+    height: 70px;
+    font-size : 20px;
+    font-weight: bold;
+}
+.newgameBtn, .closeBtn{
+    width: 200px;
+    height: 70px;
+    background-color: #1a3aff;
+    font-weight: bold;
+    font-size : 17px;
 
- }
+}
 #resultWindow,#aboutWindow{
     background: #ffdb4d;
     text-align: center;
@@ -221,6 +221,3 @@ h2{
     -webkit-margin-after: 0em;
 }
 
-/*#register{*/
-    /*position: absolute;*/
-/*}*/
