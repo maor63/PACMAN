@@ -57,7 +57,7 @@ function Start() {
     start_time = new Date();
 
     //put obstacles in (i=3,j=3) and (i=3,j=4) and (i=3,j=5), (i=6,j=1) and (i=6,j=2)
-
+    walls = [[8,9],[8,10], [8,11], [8,12],[5,8],[5,9],[5,10],[6,10],[7,10]];
     for (var i = 0; i < board_width; i++) {
         board[i] = new Array();
         for (var j = 0; j < board_height; j++) {
@@ -70,6 +70,9 @@ function Start() {
             }
         }
     }
+    $.each(walls, function (i, wall) {
+       board[wall[1]][wall[0]] = GameItems.OBSTACLE;
+    });
     InitGhosts();
     InitMovingScore();
     InitPacman();
@@ -181,11 +184,11 @@ function InitKeyLiseners() {
 
 //Find random empty cell on 10x10 board  (the 9 need to be variable)
 function findRandomEmptyCell(board) {
-    var i = Math.floor((Math.random() * (board_width - 1)) + 1);
-    var j = Math.floor((Math.random() * (board_height - 1)) + 1);
+    var i = Math.floor((Math.random() * (board_width)) );
+    var j = Math.floor((Math.random() * (board_height)) );
     while (board[i][j] != 0) {
-        i = Math.floor((Math.random() * (board_width - 1)) + 1);
-        j = Math.floor((Math.random() * (board_height - 1)) + 1);
+        i = Math.floor((Math.random() * (board_width)));
+        j = Math.floor((Math.random() * (board_height)) );
     }
     return [i, j];
 }
