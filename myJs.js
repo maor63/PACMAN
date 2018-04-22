@@ -123,7 +123,8 @@ function InitGhosts() {
     ghosts.push(new Ghost(0, 0, "Gallery/monster1.png"));
     board[0][0] = GameItems.GHOST;
     if (ghosts_number > 1) {
-        ghosts.push(new Ghost(0, board_height - 1, "Gallery/monster2.png"));
+        // ghosts.push(new Ghost(0, board_height - 1, "Gallery/monster2.png"));
+        ghosts.push(new Ghost(0, 0, "Gallery/monster2.png"));
         board[0][board_height - 1] = GameItems.GHOST;
     }
     if (ghosts_number > 2) {
