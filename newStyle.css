@@ -140,12 +140,13 @@ input[type=reset]:hover {
 footer
 {
     font-weight: bold;
-    position: absolute;
+    position: fixed;
     height: 40px;
     font-family: sans-serif;
     text-color : green;
-    top: 950px;
+    /*top: 950px;*/
     left: 0px;
+    bottom: 0;
     text-align: center;
     width: 100%;
 }
@@ -163,7 +164,11 @@ table ,td,tr ,th{
 #btnBoard{
     position: fixed;
     left: 100px;
-    top: 600px;
+    /*top: 600px;*/
+    bottom: 0px;
+    background-color: #ffdd35;
+    color:black;
+    font-weight: bold;
 }
 canvas{
     border: 10px;
